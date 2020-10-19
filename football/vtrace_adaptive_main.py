@@ -35,7 +35,6 @@ FLAGS = flags.FLAGS
 flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
 
 
-
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
   def __init__(self, env):
@@ -51,7 +50,7 @@ class DifficultyWrapper(gym.Wrapper):
     if done:
         raw_reward = float(info['score_reward'])
         self.raw_rewards.append(raw_reward)
-        print(f"avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
+        print(f"game_reward={info['score_reward']} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
             print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
