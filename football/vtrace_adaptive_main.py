@@ -44,15 +44,13 @@ class DifficultyWrapper(gym.Wrapper):
     self.unwrapped._config.ScenarioConfig().right_team_difficulty = 0.0
     self.raw_rewards = deque(maxlen=3)
     self.raw_reward = 0
-    self.eps_steps = 0
 
 
   def step(self, action):
     observation, reward, done, info = self.env.step(action)
-    self.eps_steps += 1
     self.raw_reward += float(info['score_reward'])
     if done:
-        self.raw_rewards.append(self.raw_reward / self.eps_steps)
+        self.raw_rewards.append(self.raw_reward)
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
@@ -61,7 +59,6 @@ class DifficultyWrapper(gym.Wrapper):
 
   def reset(self):
     self.raw_reward = 0
-    self.eps_steps = 0
     return self.env.reset()
 
 
