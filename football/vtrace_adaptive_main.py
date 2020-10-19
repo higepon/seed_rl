@@ -27,6 +27,7 @@ import tensorflow as tf
 from collections import deque
 import gym
 import numpy as np
+import sys
 
 FLAGS = flags.FLAGS
 
@@ -40,7 +41,7 @@ class DifficultyWrapper(gym.Wrapper):
   def __init__(self, env):
     # Call the parent constructor, so we can access self.env later
     super(DifficultyWrapper, self).__init__(env)
-    print(f"Initialized DifficultyWrapper {self.unwrapped._config.ScenarioConfig().right_team_difficulty}")
+    print(f"Initialized DifficultyWrapper {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
     self.unwrapped._config.ScenarioConfig().right_team_difficulty = 0.0
     self.raw_rewards = deque(maxlen=10)
 
@@ -50,10 +51,10 @@ class DifficultyWrapper(gym.Wrapper):
     if done:
         raw_reward = float(info['score_reward'])
         self.raw_rewards.append(raw_reward)
-        print(f"avg_raw_reward={np.mean(self.raw_rewards)}")
+        print(f"avg_raw_reward={np.mean(self.raw_rewards)}", file=sys.stderr)
         if len(self.raw_rewards) == 10 and np.mean(self.raw_rewards) >= 1.1:
             self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
-            print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}")
+            print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
     return observation, reward, done, info
 
 
