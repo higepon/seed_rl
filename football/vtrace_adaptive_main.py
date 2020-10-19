@@ -55,6 +55,7 @@ class DifficultyWrapper(gym.Wrapper):
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
             print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
+            self.raw_rewards = deque(maxlen=3)
     return observation, reward, done, info
 
   def reset(self):
