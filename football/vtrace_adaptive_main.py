@@ -59,7 +59,10 @@ class DifficultyWrapper(gym.Wrapper):
 
   def reset(self):
     self.raw_reward = 0
-    return self.env.reset()
+    difficulty = self.unwrapped._config.ScenarioConfig().right_team_difficulty
+    ret = self.env.reset()
+    self.unwrapped._config.ScenarioConfig().right_team_difficulty = difficulty
+    return ret
 
 
 def create_agent(unused_action_space, unused_env_observation_space,
