@@ -43,7 +43,7 @@ class DifficultyWrapper(gym.Wrapper):
     super(DifficultyWrapper, self).__init__(env)
     print(f"Initialized DifficultyWrapper {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
     self.unwrapped._config.ScenarioConfig().right_team_difficulty = 0.0
-    self.raw_rewards = deque(maxlen=10)
+    self.raw_rewards = deque(maxlen=3)
 
 
   def step(self, action):
@@ -52,7 +52,7 @@ class DifficultyWrapper(gym.Wrapper):
         raw_reward = float(info['score_reward'])
         self.raw_rewards.append(raw_reward)
         print(f"avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
-        if len(self.raw_rewards) == 10 and np.mean(self.raw_rewards) >= 1.1:
+        if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
             print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
     return observation, reward, done, info
