@@ -84,7 +84,7 @@ class DifficultyWrapper(gym.Wrapper):
     difficulty_prev = self.gameEnv.config.right_team_difficulty
     ret = self.env.reset()
     difficulty_current = self.gameEnv.config.right_team_difficulty
-    print(f"[Reset] difficulty from {difficulty_prev} to {difficulty_current}")
+    print(f"[Reset] difficulty from {difficulty_prev} to {difficulty_current}", file=sys.stderr)
     return ret
 
 def create_agent(unused_action_space, unused_env_observation_space,
