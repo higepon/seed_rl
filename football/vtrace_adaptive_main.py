@@ -45,7 +45,7 @@ class DifficultyWrapper(gym.Wrapper):
     self.difficulty = self.unwrapped._env._config._scenario_cfg.right_team_difficulty
 
     # FootballEnvCore
-    self.footballEnvCore = env.unwrapped._env
+    self.footballEnvCore = self.unwrapped._env
     assert(self.footballCoreEnv.__class__.__name__ == 'FootballEnvCore')
 
     # GameEnv
