@@ -28,6 +28,7 @@ from collections import deque
 import gym
 import numpy as np
 import sys
+import importlib
 
 FLAGS = flags.FLAGS
 
@@ -40,8 +41,23 @@ class DifficultyWrapper(gym.Wrapper):
   def __init__(self, env):
     # Call the parent constructor, so we can access self.env later
     super(DifficultyWrapper, self).__init__(env)
-    print(f"Initialized DifficultyWrapper {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
-    self.unwrapped._config.ScenarioConfig().right_team_difficulty = 0.95
+    print(f"Initialized DifficultyWrapper {self.unwrapped._env._config._scenario_cfg.right_team_difficulty}", file=sys.stderr)
+    self.difficulty = self.unwrapped._env._config._scenario_cfg.right_team_difficulty
+
+    # FootballEnvCore
+    self.footballEnvCore = env.unwrapped._env
+    assert(self.footballCoreEnv.__class__.__name__ == 'FootballEnvCore')
+
+    # GameEnv
+    self.gameEnv = self.footballCoreEnv._env
+    assert(self.footballCoreEnv.__class__.__name__ == 'GameEnv')
+
+    # Get scenario
+    level = self.footballCoreEnv._config['level']
+    self.scenario = importlib.import_module(f'gfootball.scenarios.{level}')
+    print(f'level={level} scenario={self.scenario}', file=sys.stderr)
+    self.build_scenario = self.scenario.build_scenario
+
     self.raw_rewards = deque(maxlen=3)
     self.raw_reward = 0
 
@@ -53,18 +69,23 @@ class DifficultyWrapper(gym.Wrapper):
         self.raw_rewards.append(self.raw_reward)
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
-            self.unwrapped._config.ScenarioConfig().right_team_difficulty += 0.001
-            print(f"**** difficulty increased to {self.unwrapped._config.ScenarioConfig().right_team_difficulty}", file=sys.stderr)
+            self.difficulty += 0.001
             self.raw_rewards = deque(maxlen=3)
     return observation, reward, done, info
 
   def reset(self):
     self.raw_reward = 0
-    difficulty = self.unwrapped._config.ScenarioConfig().right_team_difficulty
-    ret = self.env.reset()
-    self.unwrapped._config.ScenarioConfig().right_team_difficulty = difficulty
-    return ret
 
+    def build_scenario(builder):
+      self.build_scenario(builder)
+      builder.config().right_team_difficulty = self.difficulty
+
+    self.scenario.build_scenario = build_scenario
+    difficulty_prev = self.gameEnv.config.right_team_difficulty
+    ret = self.env.reset()
+    difficulty_current = self.gameEnv.config.right_team_difficulty
+    print(f"[Reset] difficulty from {difficulty_prev} to {difficulty_current}")
+    return ret
 
 def create_agent(unused_action_space, unused_env_observation_space,
                  parametric_action_distribution):
