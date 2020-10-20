@@ -42,7 +42,7 @@ class DifficultyWrapper(gym.Wrapper):
     # Call the parent constructor, so we can access self.env later
     super(DifficultyWrapper, self).__init__(env)
     print(f"Initialized DifficultyWrapper {self.unwrapped._env._config._scenario_cfg.right_team_difficulty}", file=sys.stderr)
-    self.difficulty = self.unwrapped._env._config._scenario_cfg.right_team_difficulty
+    self.difficulty = 0.5 # self.unwrapped._env._config._scenario_cfg.right_team_difficulty
 
     # FootballEnvCore
     self.footballEnvCore = self.unwrapped._env
