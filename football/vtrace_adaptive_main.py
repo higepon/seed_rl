@@ -46,14 +46,14 @@ class DifficultyWrapper(gym.Wrapper):
 
     # FootballEnvCore
     self.footballEnvCore = self.unwrapped._env
-    assert(self.footballCoreEnv.__class__.__name__ == 'FootballEnvCore')
+    assert(self.footballEnvCore.__class__.__name__ == 'FootballEnvCore')
 
     # GameEnv
-    self.gameEnv = self.footballCoreEnv._env
-    assert(self.footballCoreEnv.__class__.__name__ == 'GameEnv')
+    self.gameEnv = self.footballEnvCore._env
+    assert(self.gameEnv.__class__.__name__ == 'GameEnv')
 
     # Get scenario
-    level = self.footballCoreEnv._config['level']
+    level = self.footballEnvCore._config['level']
     self.scenario = importlib.import_module(f'gfootball.scenarios.{level}')
     print(f'level={level} scenario={self.scenario}', file=sys.stderr)
     self.build_scenario = self.scenario.build_scenario
