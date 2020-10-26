@@ -20,7 +20,7 @@ from absl import flags
 
 from seed_rl.agents.vtrace import learner
 from seed_rl.common import actor
-from seed_rl.common import common_flags  
+from seed_rl.common import common_flags
 from seed_rl.football import env
 from seed_rl.football import networks
 import tensorflow as tf
@@ -153,7 +153,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
         self._collected_checkpoints[rew_index] = (
             self._collected_checkpoints.get(rew_index, 0) + 1)
     return reward[0]
-  
+
 
 def create_agent(unused_action_space, unused_env_observation_space,
                  parametric_action_distribution):
@@ -166,8 +166,9 @@ def create_optimizer(unused_final_iteration):
   return optimizer, learning_rate_fn
 
 def create_environment(_unused):
+  e = env.create_environment(_unused)
   e = DifficultyWrapper(e)
-  e = CustomCheckpointRewardWrapper(e)  # add @kuto
+#  e = CustomCheckpointRewardWrapper(e)  # add @kuto
   return e
 
 def main(argv):
