@@ -159,6 +159,10 @@ def compute_loss(logger, parametric_action_distribution, agent, agent_state,
   logger.log(session, 'policy/entropy', entropy)
   logger.log(session, 'policy/entropy_cost', agent.entropy_cost())
   logger.log(session, 'policy/kl(old|new)', tf.reduce_mean(kl))
+  # difficulty
+  logger.log(session, 'difficulty', env.difficulty)
+  # checkpoints rewards
+  logger.log(session, 'checkpoint rewards', env.checkpoint_reward)
 
   return total_loss, session
 
