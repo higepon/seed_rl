@@ -71,7 +71,7 @@ FLAGS = flags.FLAGS
 
 
 def compute_loss(logger, parametric_action_distribution, agent, agent_state,
-                 prev_actions, env_outputs, agent_outputs, env):
+                 prev_actions, env_outputs, agent_outputs):
   # Networks expect postprocessed prev_actions but it's done during inference.
   # agent((prev_actions[t], env_outputs[t]), agent_state)
   #   -> agent_outputs[t], agent_state'
@@ -159,10 +159,6 @@ def compute_loss(logger, parametric_action_distribution, agent, agent_state,
   logger.log(session, 'policy/entropy', entropy)
   logger.log(session, 'policy/entropy_cost', agent.entropy_cost())
   logger.log(session, 'policy/kl(old|new)', tf.reduce_mean(kl))
-  # difficulty
-  logger.log(session, 'difficulty', env.difficulty)
-  # checkpoints rewards
-  logger.log(session, 'checkpoint rewards', env.checkpoint_reward)
 
   return total_loss, session
 
@@ -270,7 +266,7 @@ def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
       args = tf.nest.pack_sequence_as(unroll_specs, decode(args, data))
       with tf.GradientTape() as tape:
         loss, logs = compute_loss(logger, parametric_action_distribution, agent,
-                                  *args, env)
+                                  *args)
       grads = tape.gradient(loss, agent.trainable_variables)
       for t, g in zip(temp_grads, grads):
         t.assign(g)
