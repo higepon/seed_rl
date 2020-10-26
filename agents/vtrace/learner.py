@@ -71,7 +71,7 @@ FLAGS = flags.FLAGS
 
 
 def compute_loss(logger, parametric_action_distribution, agent, agent_state,
-                 prev_actions, env_outputs, agent_outputs):
+                 prev_actions, env_outputs, agent_outputs, env):
   # Networks expect postprocessed prev_actions but it's done during inference.
   # agent((prev_actions[t], env_outputs[t]), agent_state)
   #   -> agent_outputs[t], agent_state'
@@ -270,7 +270,7 @@ def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
       args = tf.nest.pack_sequence_as(unroll_specs, decode(args, data))
       with tf.GradientTape() as tape:
         loss, logs = compute_loss(logger, parametric_action_distribution, agent,
-                                  *args)
+                                  *args, env)
       grads = tape.gradient(loss, agent.trainable_variables)
       for t, g in zip(temp_grads, grads):
         t.assign(g)
