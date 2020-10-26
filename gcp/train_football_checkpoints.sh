@@ -38,18 +38,18 @@ trainingInput:
   hyperparameters:
     goal: MAXIMIZE
     hyperparameterMetricTag: episode_return
-    maxTrials: 10
+    maxTrials: 1
     maxParallelTrials: 1
     enableTrialEarlyStopping: True
     params:
     - parameterName: game
       type: CATEGORICAL
       categoricalValues:
-      - 11_vs_11_hard_stochastic
+      - 11_vs_11_easy_stochastic
     - parameterName: reward_experiment
       type: CATEGORICAL
       categoricalValues:
-      - scoring,checkpoints
+      - scoring
     - parameterName: inference_batch_size
       type: INTEGER
       minValue: 64

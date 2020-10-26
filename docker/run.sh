@@ -28,8 +28,8 @@ shift 3
 
 export PYTHONPATH=$PYTHONPATH:/
 
-ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=actor";
-LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_main.py --run_mode=learner";
+ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=actor";
+LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=learner";
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 tmux new-session -d -t seed_rl
