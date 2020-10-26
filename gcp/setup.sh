@@ -15,6 +15,8 @@
 
 set -e
 PROJECT_ID=$(gcloud config get-value project)
+BUCKET_NAME=${PROJECT_ID}-aiplatform
+REGION=us-central1
 export IMAGE_URI=gcr.io/$PROJECT_ID/seed
 
 start_training () {
@@ -22,13 +24,14 @@ start_training () {
   $DIR/../docker/build.sh
   $DIR/../docker/push.sh
   # Create bucket if doesn't exist.
-  gsutil ls gs://seed_rl || gsutil mb gs://seed_rl
+  # gsutil ls gs://seed_rl || gsutil mb gs://seed_rl
+  gsutil ls gs://${BUCKET_NAME} || gsutil mb gs://${BUCKET_NAME}
   JOB_NAME="SEED_$(date +"%Y%m%d%H%M%S")"
   # Start training on AI platform.
   gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --project=${PROJECT_ID} \
-    --job-dir gs://seed_rl/${JOB_NAME} \
-    --region us-central1 \
+    --job-dir gs://${BUCKET_NAME}/${JOB_NAME} \
+    --region ${REGION} \
     --config /tmp/config.yaml \
     --stream-logs -- --environment=${ENVIRONMENT} --agent=${AGENT} \
     --actors_per_worker=${ACTORS_PER_WORKER} --workers=${WORKERS} --

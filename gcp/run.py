@@ -34,7 +34,7 @@ FLAGS = flags.FLAGS
 
 def get_py_main():
   return os.path.join('/seed_rl', FLAGS.environment,
-                      FLAGS.agent + '_main.py')
+                      FLAGS.agent + '_adaptive_main.py')
 
 
 def run_learner(executor, config):
