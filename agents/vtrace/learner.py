@@ -24,7 +24,7 @@ from absl import flags
 from absl import logging
 
 from seed_rl import grpc
-from seed_rl.common import common_flags  
+from seed_rl.common import common_flags
 from seed_rl.common import utils
 from seed_rl.common import vtrace
 from seed_rl.common.parametric_distribution import get_parametric_distribution_for_action_space
@@ -247,8 +247,8 @@ def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
 
 
     iterations = optimizer.iterations
-    optimizer._create_hypers()  
-    optimizer._create_slots(agent.trainable_variables)  
+    optimizer._create_hypers()
+    optimizer._create_slots(agent.trainable_variables)
 
     # ON_READ causes the replicated variable to act as independent variables for
     # each replica.

@@ -35,6 +35,12 @@ FLAGS = flags.FLAGS
 # Optimizer settings.
 flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
 
+# Custom settings by kuto and higpon.
+flags.DEFINE_bool('adaptive_learning', True,
+                  'Whether adjust difficulty as training goes.')
+
+flags.DEFINE_bool('custom_checkpoints', False,
+                  'Whether custom checkpoints rewward is enabled.')
 
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
@@ -167,8 +173,11 @@ def create_optimizer(unused_final_iteration):
 
 def create_environment(_unused):
   e = env.create_environment(_unused)
-  e = DifficultyWrapper(e)
-#  e = CustomCheckpointRewardWrapper(e)  # add @kuto
+  if flags.adaptive_learning:
+    print("**** Adaptive learning enabled ****")
+    e = DifficultyWrapper(e)
+  if flags.custom_checkpoints:
+    e = CustomCheckpointRewardWrapper(e)  # add @kuto
   return e
 
 def main(argv):
