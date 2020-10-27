@@ -19,14 +19,14 @@ import threading
 import timeit
 from absl import logging
 import gym
-
+import sys
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from tensorflow.python.distribute import values as values_lib  
-from tensorflow.python.framework import composite_tensor  
-from tensorflow.python.framework import tensor_conversion_registry  
+from tensorflow.python.distribute import values as values_lib
+from tensorflow.python.framework import composite_tensor
+from tensorflow.python.framework import tensor_conversion_registry
 
 
 # `observation` is the observation *after* a transition. When `done` is True,
@@ -41,7 +41,9 @@ Settings = collections.namedtuple(
 
 def init_learner(num_training_tpus):
   """Performs common learner initialization."""
+  print("*** init learner", file=sys.stderr)
   if tf.config.experimental.list_logical_devices('TPU'):
+    print("*** [TPU] init learner", file=sys.stderr)
     resolver = tf.distribute.cluster_resolver.TPUClusterResolver('')
     topology = tf.tpu.experimental.initialize_tpu_system(resolver)
     strategy = tf.distribute.experimental.TPUStrategy(resolver)
@@ -57,6 +59,7 @@ def init_learner(num_training_tpus):
     tf.device('/cpu').__enter__()
     any_gpu = tf.config.experimental.list_logical_devices('GPU')
     device_name = '/device:GPU:0' if any_gpu else '/device:CPU:0'
+    print("*** [GPU or CPU] init learner", file=sys.stderr)
     strategy = tf.distribute.OneDeviceStrategy(device=device_name)
     enc = lambda x: x
     dec = lambda x, s=None: x if s is None else tf.nest.pack_sequence_as(s, x)
@@ -120,14 +123,14 @@ class UnrollStore(tf.Module):
         tf.shape(actor_ids),
         tf.shape(tf.unique(actor_ids)[0]),
         message='Duplicate actor ids')
-    
+
     tf.nest.map_structure(
         lambda s: tf.debugging.assert_equal(
             tf.shape(actor_ids)[0],
             tf.shape(s)[0],
             message='Batch dimension must be same size as number of actors.'),
         values)
-    
+
 
     curr_indices = self._index.sparse_read(actor_ids)
     unroll_indices = tf.stack([actor_ids, curr_indices], axis=-1)
@@ -243,7 +246,7 @@ class PrioritizedReplay(tf.Module):
     size = self._priorities.shape[0]
     insert_indices = tf.range(start_index, end_index) % size
     tf.nest.map_structure(
-        lambda b, v: b.batch_scatter_update(  
+        lambda b, v: b.batch_scatter_update(
             tf.IndexedSlices(v, insert_indices)),
         self._buffer,
         values)
@@ -656,7 +659,7 @@ def make_time_major(x):
     x transposed along the first two dimensions.
   """
 
-  def transpose(t):  
+  def transpose(t):
     t_static_shape = t.shape
     if t_static_shape.rank is not None and t_static_shape.rank < 2:
       return t
@@ -787,7 +790,7 @@ def tpu_encode(ts):
     A tf.nest of encoded Tensors.
   """
 
-  def visit(t):  
+  def visit(t):
     num_elements = t.shape.num_elements()
     # We need a multiple of 128 elements: encoding reduces the number of
     # elements by a factor 4 (packing uint8s into uint32s), and first thing
@@ -830,7 +833,7 @@ def tpu_decode(ts, structure=None):
     A nest of decoded tensors packed as `structure` if available, otherwise
     packed as `ts`.
   """
-  def visit(t, s):  
+  def visit(t, s):
     s = s.values[0] if isinstance(s, values_lib.PerReplica) else s
     if isinstance(s, TPUEncodedUInt8):
       x = t.encoded if isinstance(t, TPUEncodedUInt8) else t
@@ -867,7 +870,7 @@ def split_structure(structure, prefix_length, axis=0):
           tf.nest.pack_sequence_as(structure, flattened_suffix))
 
 
-class nullcontext(object):  
+class nullcontext(object):
 
   def __init__(self, *args, **kwds):
     del args  # unused
