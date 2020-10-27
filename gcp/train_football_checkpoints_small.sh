@@ -21,8 +21,8 @@ source $DIR/setup.sh
 export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
-export WORKERS=2
-export ACTORS_PER_WORKER=2
+export WORKERS=1
+export ACTORS_PER_WORKER=1
 
 cat > /tmp/config.yaml <<EOF
 trainingInput:
