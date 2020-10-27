@@ -21,7 +21,7 @@ from absl import flags
 from absl import logging
 import numpy as np
 from seed_rl import grpc
-from seed_rl.common import common_flags  
+from seed_rl.common import common_flags
 from seed_rl.common import profiling
 from seed_rl.common import utils
 import tensorflow as tf
@@ -67,7 +67,7 @@ def actor_loop(create_env_fn):
         client = grpc.Client(FLAGS.server_address)
 
         env = create_env_fn(FLAGS.task)
-        
+
 
         # Unique ID to identify a specific run of an actor.
         run_id = np.random.randint(np.iinfo(np.int64).max)
@@ -87,7 +87,7 @@ def actor_loop(create_env_fn):
         elapsed_inference_s_timer = timer_cls('actor/elapsed_inference_s', 1000)
         last_log_time = timeit.default_timer()
         last_global_step = 0
-        
+
 
         while True:
 
@@ -149,11 +149,13 @@ def actor_loop(create_env_fn):
 
             # to tensorboard @kuto
             tf.summary.scalar('actor/difficulty',env.difficulty)
-            tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
+            # TODO: Should probably make checkpoint reward as FLAG
+            if hasattr(env, 'checkpoint_reward'):
+              tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
             tf.summary.scalar('actor/reward', episode_return_sum)
             tf.summary.scalar('actor/raw_reward', episode_raw_return_sum)
             summary_writer.flush()
-            
+
             # Finally, we reset the episode which will report the transition
             # from the terminal state to the resetted state in the next loop
             # iteration (with zero rewards).
