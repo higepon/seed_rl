@@ -173,10 +173,11 @@ def create_optimizer(unused_final_iteration):
 
 def create_environment(_unused):
   e = env.create_environment(_unused)
-  if flags.adaptive_learning:
-    print("**** Adaptive learning enabled ****")
+  if FLAGS.adaptive_learning:
+    print("**** Adaptive learning enabled ****", file=sys.stderr)
     e = DifficultyWrapper(e)
-  if flags.custom_checkpoints:
+  if FLAGS.custom_checkpoints:
+    print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
     e = CustomCheckpointRewardWrapper(e)  # add @kuto
   return e
 
