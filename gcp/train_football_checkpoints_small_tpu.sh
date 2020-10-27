@@ -27,7 +27,7 @@ export ACTORS_PER_WORKER=1
 cat > /tmp/config.yaml <<EOF
 trainingInput:
   scaleTier: CUSTOM
-  masterType: standard_p100
+  masterType: n1-standard-4
   masterConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
   workerCount: ${WORKERS}
