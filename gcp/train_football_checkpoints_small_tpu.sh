@@ -34,6 +34,7 @@ trainingInput:
   workerType: cloud_tpu
   workerConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
+    tpu_tf_version: "2.2"
     acceleratorConfig:
       type: TPU_V2
       count: 8

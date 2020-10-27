@@ -77,7 +77,8 @@ def main(_):
   executor = concurrent.futures.ThreadPoolExecutor(
       max_workers=FLAGS.actors_per_worker)
   futures = []
-  if job_type == 'master':
+
+  if job_type == 'master' or job_type == 'chief':
     futures.append(run_learner(executor, config))
   else:
     assert job_type == 'worker', 'Unexpected task type: {}'.format(job_type)
