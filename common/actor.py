@@ -132,6 +132,16 @@ def actor_loop(create_env_fn):
             episode_step_sum += episode_step
             global_step += episode_step
             episodes_in_report += 1
+
+            # to tensorboard @kuto
+            tf.summary.scalar('difficulty', env.difficulty)
+            # TODO: Should probably make checkpoint reward as FLAG
+            if hasattr(env, 'checkpoint_reward'):
+              tf.summary.scalar('checkpoint', env.checkpoint_reward)
+            tf.summary.scalar('reward/reward', episode_return_sum / episodes_in_report)
+            tf.summary.scalar('reward/raw_reward', episode_raw_return_sum / episodes_in_report)
+            summary_writer.flush()
+
             if current_time - last_log_time > 1:
               logging.info(
                   'Actor steps: %i, Return: %f Raw return: %f Episode steps: %f, Speed: %f steps/s',
@@ -146,15 +156,6 @@ def actor_loop(create_env_fn):
               episode_step_sum = 0
               episodes_in_report = 0
               last_log_time = current_time
-
-            # to tensorboard @kuto
-            tf.summary.scalar('actor/difficulty',env.difficulty)
-            # TODO: Should probably make checkpoint reward as FLAG
-            if hasattr(env, 'checkpoint_reward'):
-              tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
-            tf.summary.scalar('actor/reward', episode_return_sum)
-            tf.summary.scalar('actor/raw_reward', episode_raw_return_sum)
-            summary_writer.flush()
 
             # Finally, we reset the episode which will report the transition
             # from the terminal state to the resetted state in the next loop
