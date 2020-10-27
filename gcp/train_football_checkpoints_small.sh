@@ -52,8 +52,8 @@ trainingInput:
       - scoring,checkpoints
     - parameterName: inference_batch_size
       type: INTEGER
-      minValue: 64
-      maxValue: 64
+      minValue: 1
+      maxValue: 1
       scaleType: UNIT_LOG_SCALE
     - parameterName: batch_size
       type: INTEGER
