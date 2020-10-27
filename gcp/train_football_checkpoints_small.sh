@@ -21,8 +21,8 @@ source $DIR/setup.sh
 export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
-export WORKERS=25
-export ACTORS_PER_WORKER=8
+export WORKERS=2
+export ACTORS_PER_WORKER=2
 
 cat > /tmp/config.yaml <<EOF
 trainingInput:
@@ -38,14 +38,14 @@ trainingInput:
   hyperparameters:
     goal: MAXIMIZE
     hyperparameterMetricTag: episode_return
-    maxTrials: 10
+    maxTrials: 1
     maxParallelTrials: 1
     enableTrialEarlyStopping: True
     params:
     - parameterName: game
       type: CATEGORICAL
       categoricalValues:
-      - 11_vs_11_hard_stochastic
+      - 11_vs_11_easy_stochastic
     - parameterName: reward_experiment
       type: CATEGORICAL
       categoricalValues:
@@ -67,8 +67,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 500000000
-      maxValue: 500000000
+      minValue: 10000
+      maxValue: 10000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
