@@ -148,7 +148,9 @@ def actor_loop(create_env_fn):
               last_log_time = current_time
 
             # to tensorboard @kuto
-            tf.summary.scalar('actor/difficulty',env.difficulty)
+            # we should probably assert env.
+            if hasattr(env, 'difficulty'):
+              tf.summary.scalar('actor/difficulty', env.difficulty)
             # TODO: Should probably make checkpoint reward as FLAG
             if hasattr(env, 'checkpoint_reward'):
               tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
