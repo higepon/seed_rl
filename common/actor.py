@@ -149,14 +149,14 @@ def actor_loop(create_env_fn):
 
             # to tensorboard @kuto
             # we should probably assert env.
-            if hasattr(env, 'difficulty'):
-              tf.summary.scalar('actor/difficulty', env.difficulty)
+            #if hasattr(env, 'difficulty'):
+            #  tf.summary.scalar('actor/difficulty', env.difficulty)
             # TODO: Should probably make checkpoint reward as FLAG
-            if hasattr(env, 'checkpoint_reward'):
-              tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
-            tf.summary.scalar('actor/reward', episode_return_sum)
-            tf.summary.scalar('actor/raw_reward', episode_raw_return_sum)
-            summary_writer.flush()
+            #if hasattr(env, 'checkpoint_reward'):
+            #  tf.summary.scalar('actor/checkpoint', env.checkpoint_reward)
+            #tf.summary.scalar('actor/reward', episode_return_sum)
+            #tf.summary.scalar('actor/raw_reward', episode_raw_return_sum)
+            #summary_writer.flush()
 
             # Finally, we reset the episode which will report the transition
             # from the terminal state to the resetted state in the next loop
