@@ -147,6 +147,7 @@ def actor_loop(create_env_fn):
               episodes_in_report = 0
               last_log_time = current_time
 
+            # temporaly disabled this due to GPU memory error: https://github.com/tensorflow/tensorboard/issues/2485
             # to tensorboard @kuto
             # we should probably assert env.
             #if hasattr(env, 'difficulty'):
