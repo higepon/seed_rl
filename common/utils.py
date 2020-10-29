@@ -21,6 +21,9 @@ from absl import logging
 import gym
 import sys
 import numpy as np
+import os
+import json
+import time
 import tensorflow as tf
 import tensorflow_probability as tfp
 
@@ -38,15 +41,66 @@ EnvOutput = collections.namedtuple(
 Settings = collections.namedtuple(
     'Settings', 'strategy inference_devices training_strategy encode decode')
 
+def wait_for_tpu_cluster_resolver_ready():
+  """Waits for `TPUClusterResolver` to be ready and return it.
+
+  Returns:
+    A TPUClusterResolver if there is TPU machine (in TPU_CONFIG). Otherwise,
+    return None.
+  Raises:
+    RuntimeError: if failed to schedule TPU.
+  """
+  tpu_config_env = os.environ.get('TPU_CONFIG')
+  if not tpu_config_env:
+    print('Missing TPU_CONFIG, use CPU/GPU for training.', file=sys.stderr)
+    return None
+
+  tpu_node = json.loads(tpu_config_env)
+  print('Waiting for TPU to be ready: \n', tpu_node, file=sys.stderr)
+
+  num_retries = 40
+  for i in range(num_retries):
+    try:
+      tpu_cluster_resolver = (
+          tf.distribute.cluster_resolver.TPUClusterResolver(
+              tpu=[tpu_node['tpu_node_name']],
+              zone=tpu_node['zone'],
+              project=tpu_node['project'],
+              job_name='worker'))
+      tpu_cluster_resolver_dict = tpu_cluster_resolver.cluster_spec().as_dict()
+      if 'worker' in tpu_cluster_resolver_dict:
+        print('Found TPU worker: ', tpu_cluster_resolver_dict, file=sys.stderr)
+        return tpu_cluster_resolver
+    except Exception as e:
+      if i < num_retries - 1:
+        print('Still waiting for provisioning of TPU VM instance.', file=sys.stderr)
+      else:
+        # Preserves the traceback.
+        raise RuntimeError('Failed to schedule TPU: {}'.format(e))
+    time.sleep(10)
+
+  # Raise error when failed to get TPUClusterResolver after retry.
+  raise RuntimeError('Failed to schedule TPU.')
 
 def init_learner(num_training_tpus):
   """Performs common learner initialization."""
   print("*** init learner", file=sys.stderr)
+  print("env", os.environ, file=sys.stderr)
+  print("start waiting", file=sys.stderr)
+  resolver = wait_for_tpu_cluster_resolver_ready()
+  print("done waiting", file=sys.stderr)
+
+  #resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+  tf.config.experimental_connect_to_cluster(resolver)
+  topology = tf.tpu.experimental.initialize_tpu_system(resolver)
+  strategy = tf.distribute.experimental.TPUStrategy(resolver)
+  print("resolover", resolver, file=sys.stderr)
+  print("list results", tf.config.experimental.list_logical_devices('TPU'), file=sys.stderr)
   if tf.config.experimental.list_logical_devices('TPU'):
     print("*** [TPU] init learner", file=sys.stderr)
-    resolver = tf.distribute.cluster_resolver.TPUClusterResolver('')
-    topology = tf.tpu.experimental.initialize_tpu_system(resolver)
-    strategy = tf.distribute.experimental.TPUStrategy(resolver)
+#    resolver = tf.distribute.cluster_resolver.TPUClusterResolver('')
+#    topology = tf.tpu.experimental.initialize_tpu_system(resolver)
+    #strategy = tf.distribute.experimental.TPUStrategy(resolver)
     training_da = tf.tpu.experimental.DeviceAssignment.build(
         topology, num_replicas=num_training_tpus)
     training_strategy = tf.distribute.experimental.TPUStrategy(

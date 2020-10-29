@@ -41,6 +41,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /
 RUN pip3 install gfootball==2.7
 RUN pip3 install tensorflow_probability==0.9.0
+RUN pip3 install cloud-tpu-client
 
 # Copy SEED codebase and SEED GRPC library.
 ADD . /seed_rl/

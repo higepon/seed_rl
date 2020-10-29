@@ -27,14 +27,14 @@ export ACTORS_PER_WORKER=1
 cat > /tmp/config.yaml <<EOF
 trainingInput:
   scaleTier: CUSTOM
-  masterType: n1-standard-4
   masterConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
-  workerCount: ${WORKERS}
+  masterType: n1-standard-4
   workerType: cloud_tpu
+  workerCount: ${WORKERS}
   workerConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
-    tpu_tf_version: "2.2"
+    tpuTfVersion: "2.2"
     acceleratorConfig:
       type: TPU_V2
       count: 8
