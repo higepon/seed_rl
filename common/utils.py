@@ -85,17 +85,23 @@ def wait_for_tpu_cluster_resolver_ready():
 def init_learner(num_training_tpus):
   """Performs common learner initialization."""
   print("*** init learner", file=sys.stderr)
-  print("env", os.environ, file=sys.stderr)
-  print("start waiting", file=sys.stderr)
-  resolver = wait_for_tpu_cluster_resolver_ready()
-  print("done waiting", file=sys.stderr)
+  resolver = None
+  topology = None
+  strategy = None
+  if tf.config.experimental.list_logical_devices('GPU'):
+    print("Found GPU skipping TPU look up")
+  else:
+    print("env", os.environ, file=sys.stderr)
+    print("start waiting", file=sys.stderr)
+    resolver = wait_for_tpu_cluster_resolver_ready()
+    print("done waiting", file=sys.stderr)
 
-  #resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
-  tf.config.experimental_connect_to_cluster(resolver)
-  topology = tf.tpu.experimental.initialize_tpu_system(resolver)
-  strategy = tf.distribute.experimental.TPUStrategy(resolver)
-  print("resolover", resolver, file=sys.stderr)
-  print("list results", tf.config.experimental.list_logical_devices('TPU'), file=sys.stderr)
+    #resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+    tf.config.experimental_connect_to_cluster(resolver)
+    topology = tf.tpu.experimental.initialize_tpu_system(resolver)
+    strategy = tf.distribute.experimental.TPUStrategy(resolver)
+    print("resolover", resolver, file=sys.stderr)
+    print("list results", tf.config.experimental.list_logical_devices('TPU'), file=sys.stderr)
   if tf.config.experimental.list_logical_devices('TPU'):
     print("*** [TPU] init learner", file=sys.stderr)
 #    resolver = tf.distribute.cluster_resolver.TPUClusterResolver('')
