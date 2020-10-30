@@ -16,6 +16,30 @@ FROM tensorflow/tensorflow:2.2.0-gpu
 # Needed to disable interactive configuration by tzdata.
 RUN ln -fs /usr/share/zoneinfo/Europe/Dublin /etc/localtime
 
+RUN apt-get install -y curl python3.7 python3.7-dev python3.7-distutils
+
+RUN ls -lSh /usr/bin/python*
+
+# Register the version in alternatives
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1
+# Set python 3 as the default python
+RUN update-alternatives --set python /usr/bin/python3.7
+RUN update-alternatives --set python3 /usr/bin/python3.7
+RUN python3 -m pip install --ignore-installed six
+RUN which python3
+RUN ls -lsh /usr/bin/python3
+
+# Upgrade pip to latest version
+RUN curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python get-pip.py --force-reinstall && \
+    rm get-pip.py
+
+RUN ls -lSha /usr/bin/python3
+
+RUN python --version
+RUN python3 --version
+
 RUN apt-get update && apt-get install -y \
   git \
   cmake \
@@ -30,6 +54,7 @@ RUN apt-get update && apt-get install -y \
   libst-dev \
   glee-dev \
   mesa-utils \
+  ffmpeg \
   xvfb \
   x11vnc \
   libsdl-sge-dev \
@@ -38,12 +63,29 @@ RUN apt-get update && apt-get install -y \
   libboost-python-dev \
   tmux
 
+RUN echo "hige"
+RUN which pip
+RUN which pip3
+RUN which python3
+RUN python3 --version
+RUN ls
+
 WORKDIR /
-RUN pip3 install gfootball==2.7
-RUN pip3 install tensorflow_probability==0.9.0
-RUN pip3 install cloud-tpu-client
+Run find / -name "*libboost_python3*"
+#RUN pip3 install gfootball==2.7
+Run git clone https://github.com/higepon/football
+WORKDIR football
+RUN python3 -m pip install .
+
+WORKDIR /
+RUN python3 -m pip install absl-py
+RUN python3 -m pip install tensorflow_probability==0.9.0
+RUN python3 -m pip install cloud-tpu-client
+RUN python3 -m pip install tensorflow-gpu==2.2.0
+
+RUN python --version
 
 # Copy SEED codebase and SEED GRPC library.
 ADD . /seed_rl/
 WORKDIR /seed_rl
-ENTRYPOINT ["python", "gcp/run.py"]
+ENTRYPOINT ["python3", "gcp/run.py"]

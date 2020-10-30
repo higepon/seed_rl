@@ -84,7 +84,7 @@ def wait_for_tpu_cluster_resolver_ready():
 
 def init_learner(num_training_tpus):
   """Performs common learner initialization."""
-  print("*** init learner", file=sys.stderr)
+  print("*** init learner tf version ", tf.__version__, "git", tf.version.GIT_VERSION, "ver", tf.version.VERSION, file=sys.stderr)
   resolver = None
   topology = None
   strategy = None
