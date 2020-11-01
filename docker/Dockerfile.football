@@ -88,4 +88,5 @@ RUN python --version
 # Copy SEED codebase and SEED GRPC library.
 ADD . /seed_rl/
 WORKDIR /seed_rl
+RUN PYTHONPATH=/ python3 grpc/python/ops_test.py
 ENTRYPOINT ["python3", "gcp/run.py"]

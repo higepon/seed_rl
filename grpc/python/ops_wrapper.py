@@ -25,3 +25,6 @@ import tensorflow as tf
 gen_grpc_ops = tf.load_op_library(
     os.path.join(tf.compat.v1.resource_loader.get_data_files_path(),
                  '../grpc_cc.so'))
+import sys
+print("***** grpc path", os.path.join(tf.compat.v1.resource_loader.get_data_files_path(),
+                 '../grpc_cc.so'), file=sys.stderr)

@@ -96,12 +96,25 @@ def init_learner(num_training_tpus):
     resolver = wait_for_tpu_cluster_resolver_ready()
     print("done waiting", file=sys.stderr)
 
+
     #resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
     tf.config.experimental_connect_to_cluster(resolver)
     topology = tf.tpu.experimental.initialize_tpu_system(resolver)
     strategy = tf.distribute.experimental.TPUStrategy(resolver)
     print("resolover", resolver, file=sys.stderr)
     print("list results", tf.config.experimental.list_logical_devices('TPU'), file=sys.stderr)
+
+    tpu_config_env = os.environ.get('TPU_CONFIG')
+    tpu_node = json.loads(tpu_config_env)
+    tpu=[tpu_node['tpu_node_name']]
+    zone=tpu_node['zone']
+    project=tpu_node['project']
+    from cloud_tpu_client import Client
+
+    c = Client(tpu=tpu, zone=zone, project=project)
+    c.configure_tpu_version(tf.__version__, restart_type='ifNeeded')
+
+
   if tf.config.experimental.list_logical_devices('TPU'):
     print("*** [TPU] init learner", file=sys.stderr)
 #    resolver = tf.distribute.cluster_resolver.TPUClusterResolver('')
