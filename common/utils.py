@@ -650,6 +650,7 @@ class ProgressLogger(object):
     dt = logging_time - self.last_log_time
     df = tf.cast(step_cnt - self.last_log_step, tf.float32)
     tf.summary.scalar('speed/steps_per_sec', df / dt)
+    print("*** learner {} steps/sec".format(df / dt), file=sys.stderr)
     self.last_log_time, self.last_log_step = logging_time, step_cnt
 
   def _logging_loop(self):
