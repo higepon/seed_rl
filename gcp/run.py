@@ -39,7 +39,7 @@ def get_py_main():
 
 def run_learner(executor, config):
   """Runs learner job using executor."""
-  _, master_port = config.get('cluster').get('chief')[0].split(':', 1)
+  _, master_port = config.get('cluster').get('master')[0].split(':', 1)
   args = [
       'python', get_py_main(),
       '--run_mode=learner',
