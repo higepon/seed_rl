@@ -27,7 +27,7 @@ import concurrent.futures
 flags.DEFINE_string('environment', 'football', 'Environment to run.')
 flags.DEFINE_string('agent', 'vtrace', 'Agent to run.')
 flags.DEFINE_integer('workers', 1, 'Number of workers.')
-flags.DEFINE_integer('actors_per_worker', 1,
+flags.DEFINE_integer('actors_per_worker', 6,
                      'Number of actors to run on a single worker.')
 FLAGS = flags.FLAGS
 

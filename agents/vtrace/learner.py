@@ -19,6 +19,7 @@ import collections
 import math
 import os
 import time
+import sys
 
 from absl import flags
 from absl import logging
@@ -170,6 +171,7 @@ Unroll = collections.namedtuple(
 def validate_config():
   if FLAGS.inference_batch_size == -1:
     FLAGS.inference_batch_size = max(1, FLAGS.num_actors // 2)
+  print("flags=", FLAGS.inference_batch_size, FLAGS.num_actors, file=sys.stderr)
   assert FLAGS.num_actors >= FLAGS.inference_batch_size, (
       'Inference batch size is bigger than the number of actors.')
 

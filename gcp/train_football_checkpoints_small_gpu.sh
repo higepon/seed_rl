@@ -21,8 +21,8 @@ source $DIR/setup.sh
 export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
-export WORKERS=1
-export ACTORS_PER_WORKER=1
+export WORKERS=2
+export ACTORS_PER_WORKER=20
 
 cat > /tmp/config.yaml <<EOF
 trainingInput:
@@ -31,7 +31,7 @@ trainingInput:
   masterConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
   workerCount: ${WORKERS}
-  workerType: standard
+  workerType: complex_model_s
   workerConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
   parameterServerCount: 0
@@ -45,7 +45,7 @@ trainingInput:
     - parameterName: game
       type: CATEGORICAL
       categoricalValues:
-      - 11_vs_11_easy_stochastic
+      - 11_vs_11_hard_stochastic
     - parameterName: reward_experiment
       type: CATEGORICAL
       categoricalValues:
@@ -67,8 +67,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 10000
-      maxValue: 10000
+      minValue: 200000
+      maxValue: 200000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
