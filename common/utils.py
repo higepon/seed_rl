@@ -41,6 +41,7 @@ EnvOutput = collections.namedtuple(
 Settings = collections.namedtuple(
     'Settings', 'strategy inference_devices training_strategy encode decode')
 
+
 def wait_for_tpu_cluster_resolver_ready():
   """Waits for `TPUClusterResolver` to be ready and return it.
 

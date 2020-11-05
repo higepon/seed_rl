@@ -82,6 +82,7 @@ RUN python3 -m pip install absl-py
 RUN python3 -m pip install tensorflow_probability==0.9.0
 RUN python3 -m pip install cloud-tpu-client
 RUN python3 -m pip install tensorflow-gpu==2.2.0
+RUN python3 -m pip install psutil
 
 RUN python --version
 

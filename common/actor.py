@@ -20,6 +20,8 @@ import timeit
 from absl import flags
 from absl import logging
 import numpy as np
+import psutil
+import sys
 from seed_rl import grpc
 from seed_rl.common import common_flags
 from seed_rl.common import profiling
@@ -41,6 +43,18 @@ def are_summaries_enabled():
   return FLAGS.task < FLAGS.num_actors_with_summaries
 
 
+def number_of_actors():
+  num = 0
+  for proc in psutil.process_iter():
+      try:
+          # Check if process name contains the given name string.
+          #print("** proc name", proc.cmdline(), file=sys.stderr)
+          if "--run_mode=actor" in proc.cmdline():
+              num += 1
+      except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+          pass
+  return num
+
 def actor_loop(create_env_fn):
   """Main actor loop.
 
@@ -49,6 +63,7 @@ def actor_loop(create_env_fn):
       newly created environment.
   """
   logging.info('Starting actor loop')
+  print("*** num actors=", number_of_actors(), file=sys.stderr)
   is_rendering_enabled = FLAGS.render and FLAGS.task == 0
   if are_summaries_enabled():
     summary_writer = tf.summary.create_file_writer(
