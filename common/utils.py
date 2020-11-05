@@ -589,6 +589,10 @@ class ProgressLogger(object):
     self.last_log_time = timeit.default_timer()
     self.last_log_step = starting_step
 
+    ## additional logging
+    self.last_avg_log_time = timeit.default_timer()
+    self.last_avg_log_step = starting_step
+
   def start(self, logging_callback=None):
     assert self.logger_thread is None
     self.logging_callback = logging_callback
@@ -650,7 +654,11 @@ class ProgressLogger(object):
     dt = logging_time - self.last_log_time
     df = tf.cast(step_cnt - self.last_log_step, tf.float32)
     tf.summary.scalar('speed/steps_per_sec', df / dt)
-    print("*** learner {} steps/sec".format(df / dt), file=sys.stderr)
+    if step_cnt - self.last_avg_log_step >= 10000:
+      steps_avg_per_spec = tf.cast(step_cnt - self.last_avg_log_step, tf.float32) / (logging_time - self.last_avg_log_time)
+      print("**** steps_per_sec", steps_avg_per_spec, file=sys.stderr)
+      tf.summary.scalar('speed/steps_avg_per_sec', steps_avg_per_spec)
+      self.last_avg_log_time, self.last_avg_log_step = logging_time, step_cnt
     self.last_log_time, self.last_log_step = logging_time, step_cnt
 
   def _logging_loop(self):

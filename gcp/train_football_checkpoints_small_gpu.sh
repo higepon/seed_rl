@@ -21,17 +21,20 @@ source $DIR/setup.sh
 export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
-export WORKERS=2
-export ACTORS_PER_WORKER=20
+export WORKERS=1
+export ACTORS_PER_WORKER=48
 
 cat > /tmp/config.yaml <<EOF
 trainingInput:
   scaleTier: CUSTOM
-  masterType: standard_p100
+  masterType: n1-standard-4 # master is not cpu or memory bound.
   masterConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
+    acceleratorConfig:
+      count: 1
+      type: NVIDIA_TESLA_K80 # TODO: Switch to better one NVIDIA_TESLA_P100, NVIDIA_TESLA_V100.
   workerCount: ${WORKERS}
-  workerType: complex_model_s
+  workerType: n1-highmem-8
   workerConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
   parameterServerCount: 0
@@ -50,6 +53,11 @@ trainingInput:
       type: CATEGORICAL
       categoricalValues:
       - scoring,checkpoints
+#    - parameterName: actors_per_worker
+#      type: INTEGER
+#      minValue: ${ACTORS_PER_WORKER}
+#      maxValue: ${ACTORS_PER_WORKER}
+#      scaleType: UNIT_LOG_SCALE
     - parameterName: inference_batch_size
       type: INTEGER
       minValue: 1
@@ -57,8 +65,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: batch_size
       type: INTEGER
-      minValue: 32
-      maxValue: 32
+      minValue: 64
+      maxValue: 64
       scaleType: UNIT_LOG_SCALE
     - parameterName: unroll_length
       type: INTEGER
@@ -67,8 +75,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 200000
-      maxValue: 200000
+      minValue: 150000
+      maxValue: 150000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
