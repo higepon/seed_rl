@@ -72,6 +72,7 @@ trainingInput:
       minValue: 128
       maxValue: 128
       scaleType: UNIT_LOG_SCALE
+# Unroll length 32 is best per their paper
     - parameterName: unroll_length
       type: INTEGER
       minValue: 32
@@ -84,8 +85,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
-      minValue: 0.997
-      maxValue: 0.997
+      minValue: 0.993
+      maxValue: 0.993
       scaleType: UNIT_LOG_SCALE
     - parameterName: entropy_cost
       type: DOUBLE
@@ -99,8 +100,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: learning_rate
       type: DOUBLE
-      minValue: 0.00012542101122072784
-      maxValue: 0.00012542101122072784
+      minValue: 0.00019896
+      maxValue: 0.00019896
       scaleType: UNIT_LOG_SCALE
 EOF
 
