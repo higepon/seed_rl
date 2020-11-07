@@ -21,8 +21,11 @@ source $DIR/setup.sh
 export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
-export WORKERS=1
-export ACTORS_PER_WORKER=48
+# See https://docs.google.com/spreadsheets/d/12emT_Zc1Ckbp3gZDBL-0hktmnhLefyCNCXBx7Xye1-o/edit#gid=0
+export WORKERS=2
+export NUM_VCPU=96
+export ACTORS_PER_WORKER=192
+
 
 cat > /tmp/config.yaml <<EOF
 trainingInput:
@@ -32,9 +35,9 @@ trainingInput:
     imageUri: ${IMAGE_URI}:${CONFIG}
     acceleratorConfig:
       count: 1
-      type: NVIDIA_TESLA_K80 # TODO: Switch to better one NVIDIA_TESLA_P100, NVIDIA_TESLA_V100.
+      type: NVIDIA_TESLA_P100 # TODO: Switch to better one NVIDIA_TESLA_P100, NVIDIA_TESLA_V100.
   workerCount: ${WORKERS}
-  workerType: n1-highmem-8
+  workerType: n1-standard-${NUM_VCPU}
   workerConfig:
     imageUri: ${IMAGE_URI}:${CONFIG}
   parameterServerCount: 0
@@ -58,15 +61,16 @@ trainingInput:
 #      minValue: ${ACTORS_PER_WORKER}
 #      maxValue: ${ACTORS_PER_WORKER}
 #      scaleType: UNIT_LOG_SCALE
-    - parameterName: inference_batch_size
-      type: INTEGER
-      minValue: 1
-      maxValue: 1
-      scaleType: UNIT_LOG_SCALE
+# higepon: We use default value -1 so that it can be autotuned.
+#    - parameterName: inference_batch_size
+#      type: INTEGER
+#      minValue: 1
+#      maxValue: 1
+#      scaleType: UNIT_LOG_SCALE
     - parameterName: batch_size
       type: INTEGER
-      minValue: 64
-      maxValue: 64
+      minValue: 128
+      maxValue: 128
       scaleType: UNIT_LOG_SCALE
     - parameterName: unroll_length
       type: INTEGER
@@ -75,8 +79,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 150000
-      maxValue: 150000
+      minValue: 100000
+      maxValue: 100000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
