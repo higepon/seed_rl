@@ -48,7 +48,7 @@ def number_of_actors():
   for proc in psutil.process_iter():
       try:
           # Check if process name contains the given name string.
-          #print("** proc name", proc.cmdline(), file=sys.stderr)
+          # print("** proc name", proc.cmdline(), file=sys.stderr)
           if "--run_mode=actor" in proc.cmdline():
               num += 1
       except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -184,5 +184,6 @@ def actor_loop(create_env_fn):
               env.render()
           actor_step += 1
       except (tf.errors.UnavailableError, tf.errors.CancelledError) as e:
+        print(e, file=sys.stderr)
         logging.exception(e)
         env.close()

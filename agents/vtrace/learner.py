@@ -195,6 +195,7 @@ def learner_loop(create_env_fn, create_agent_fn, create_optimizer_fn):
       tf.keras.optimizers.schedules.LearningRateSchedule.
   """
   logging.info('Starting learner loop')
+  print('*** starting learner loop', FLAGS.logdir, file=sys.stderr)
   validate_config()
   settings = utils.init_learner(FLAGS.num_training_tpus)
   strategy, inference_devices, training_strategy, encode, decode = settings

@@ -22,7 +22,7 @@ export CONFIG=football
 export ENVIRONMENT=football
 export AGENT=vtrace
 # See https://docs.google.com/spreadsheets/d/12emT_Zc1Ckbp3gZDBL-0hktmnhLefyCNCXBx7Xye1-o/edit#gid=0
-export WORKERS=2
+export WORKERS=4
 export NUM_VCPU=96
 export ACTORS_PER_WORKER=192
 
@@ -80,8 +80,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 100000
-      maxValue: 100000
+      minValue: 500000000
+      maxValue: 500000000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
