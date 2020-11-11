@@ -176,6 +176,7 @@ def create_optimizer(unused_final_iteration):
 
 def create_environment(_unused):
   e = env.create_environment(_unused)
+  print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
   if FLAGS.adaptive_learning:
     print("**** Adaptive learning enabled ****", file=sys.stderr)
     e = DifficultyWrapper(e, FLAGS.initial_difficulty)
