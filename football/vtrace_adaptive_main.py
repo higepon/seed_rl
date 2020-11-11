@@ -38,17 +38,18 @@ flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
 # Custom settings by kuto and higpon.
 flags.DEFINE_bool('adaptive_learning', True,
                   'Whether adjust difficulty as training goes.')
+flags.DEFINE_float('initial_difficulty', 1.0, 'initial difficulty')
 
 flags.DEFINE_bool('custom_checkpoints', False,
                   'Whether custom checkpoints rewward is enabled.')
 
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
-  def __init__(self, env):
+  def __init__(self, env, initial_difficulty):
     # Call the parent constructor, so we can access self.env later
     super(DifficultyWrapper, self).__init__(env)
     print(f"Initialized DifficultyWrapper {self.unwrapped._env._config._scenario_cfg.right_team_difficulty}", file=sys.stderr)
-    self.difficulty = 0.949 # self.unwrapped._env._config._scenario_cfg.right_team_difficulty
+    self.difficulty = initial_difficulty
 
     # FootballEnvCore
     self.footballEnvCore = self.unwrapped._env
@@ -177,7 +178,7 @@ def create_environment(_unused):
   e = env.create_environment(_unused)
   if FLAGS.adaptive_learning:
     print("**** Adaptive learning enabled ****", file=sys.stderr)
-    e = DifficultyWrapper(e)
+    e = DifficultyWrapper(e, FLAGS.initial_difficulty)
   if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
     e = CustomCheckpointRewardWrapper(e)  # add @kuto
