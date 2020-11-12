@@ -1,7 +1,7 @@
 ## 最初の training 用
 ##
 ## - steps: 500M
-## - reward: checkpoints,scoring using custom checkpoints.
+## - reward: scoring + custom checkpoints.
 ## - difficulty: easy to 1.0 using adaptive
 ## - GPU: NVIDIA_TESLA_P100
 ## - CPU: n1-standard-96 * 4
@@ -50,7 +50,7 @@ trainingInput:
     - parameterName: reward_experiment
       type: CATEGORICAL
       categoricalValues:
-      - scoring,checkpoints
+      - scoring
 #    - parameterName: actors_per_worker
 #      type: INTEGER
 #      minValue: ${ACTORS_PER_WORKER}
