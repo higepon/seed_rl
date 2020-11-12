@@ -41,9 +41,11 @@ def create_environment(_):
       'medium': (120, 90),
       'large': (144, 108),
   }[FLAGS.smm_size]
+  logging.info('1. Creating environment: %s', FLAGS.game)
   env = gym.make(
       'gfootball:GFootball-%s-SMM-v0' % FLAGS.game,
       stacked=True,
       rewards=FLAGS.reward_experiment,
       channel_dimensions=channel_dimensions)
+  logging.info('2. Creating environment: %s', FLAGS.game)
   return observation.PackedBitsObservation(env)
