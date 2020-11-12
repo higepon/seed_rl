@@ -79,13 +79,10 @@ def actor_loop(create_env_fn):
     while True:
       try:
         # Client to communicate with the learner.
-        print("*** before GCP client{}".format(FLAGS.server_address), file=sys.stderr)
         client = grpc.Client(FLAGS.server_address)
-        print("*** after GCP client{}".format(client), file=sys.stderr)
         env = create_env_fn(FLAGS.task)
 
 
-        print("*** after create env", file=sys.stderr, flush=True)
         # Unique ID to identify a specific run of an actor.
         run_id = np.random.randint(np.iinfo(np.int64).max)
         observation = env.reset()
@@ -93,7 +90,6 @@ def actor_loop(create_env_fn):
         raw_reward = 0.0
         done = False
         abandoned = False
-        print("*** after env reset env", file=sys.stderr, flush=True)
         global_step = 0
         episode_step = 0
         episode_step_sum = 0
@@ -105,20 +101,16 @@ def actor_loop(create_env_fn):
         last_log_time = timeit.default_timer()
         last_global_step = 0
 
-        print("*** before the actor loop", file=sys.stderr, flush=True)
         while True:
 
           tf.summary.experimental.set_step(actor_step)
           env_output = utils.EnvOutput(reward, done, observation,
                                        abandoned, episode_step)
-          print("*** before inference", file=sys.stderr, flush=True)
           with elapsed_inference_s_timer:
             action = client.inference(
                 FLAGS.task, run_id, env_output, raw_reward)
-          print("*** after inference", file=sys.stderr, flush=True)
           with timer_cls('actor/elapsed_env_step_s', 1000):
             observation, reward, done, info = env.step(action.numpy())
-          print("*** after env.step", file=sys.stderr)
           if is_rendering_enabled:
             env.render()
           episode_step += 1
@@ -131,7 +123,6 @@ def actor_loop(create_env_fn):
           abandoned = (info or {}).get('abandoned', False)
           assert done if abandoned else True
           if done:
-            print("*** after done", file=sys.stderr)
             # If the episode was abandoned, we need to report the final
             # transition including the final observation as if the episode has
             # not terminated yet. This way, learning algorithms can use the
@@ -142,11 +133,9 @@ def actor_loop(create_env_fn):
               # resetted state.
               env_output = utils.EnvOutput(reward, False, observation,
                                            False, episode_step)
-              print("*** before inference2", file=sys.stderr)
               with elapsed_inference_s_timer:
                 action = client.inference(
                     FLAGS.task, run_id, env_output, raw_reward)
-              print("*** after inference2", file=sys.stderr)
               reward = 0.0
               raw_reward = 0.0
 
