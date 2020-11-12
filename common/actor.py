@@ -85,6 +85,7 @@ def actor_loop(create_env_fn):
         env = create_env_fn(FLAGS.task)
 
 
+        print("*** after create env", file=sys.stderr)
         # Unique ID to identify a specific run of an actor.
         run_id = np.random.randint(np.iinfo(np.int64).max)
         observation = env.reset()
@@ -92,7 +93,7 @@ def actor_loop(create_env_fn):
         raw_reward = 0.0
         done = False
         abandoned = False
-
+        print("*** after env reset env", file=sys.stderr)
         global_step = 0
         episode_step = 0
         episode_step_sum = 0
