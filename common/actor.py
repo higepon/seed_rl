@@ -79,8 +79,9 @@ def actor_loop(create_env_fn):
     while True:
       try:
         # Client to communicate with the learner.
+        print("*** before GCP client{}".format(FLAGS.server_address), file=sys.stderr)
         client = grpc.Client(FLAGS.server_address)
-
+        print("*** after GCP client{}".format(client), file=sys.stderr)
         env = create_env_fn(FLAGS.task)
 
 
