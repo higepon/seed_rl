@@ -114,7 +114,8 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     # self.checkpoint_reward = np.float32(self.checkpoint_reward * self.epsilon)  # exponential
     if self.checkpoint_reward > 0.0:
       prev_checkpoint_reward = self.checkpoint_reward
-      self.checkpoint_reward = np.around(np.float32(self.checkpoint_reward - self.epsilon), decimals=8) # linear
+      self.checkpoint_reward = self.checkpoint_reward - self.epsilon
+      print("**** self.checkpoint_reward", self.checkpoint_reward, type(self.checkpoint_reward), file=sys.stderr)
       print(f"[Reset] Checkpoint reward from {prev_checkpoint_reward} to {self.checkpoint_reward}", file=sys.stderr)
     else:
       self.checkpoint_reward = 0.0
@@ -133,6 +134,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     reward = [reward]
     observation = self.env.unwrapped.observation()
     if observation is None:
+      print("***** reward", reward, file=sys.stderr)
       return reward
 
     assert len(reward) == len(observation)
@@ -169,6 +171,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
         reward[rew_index] += self.checkpoint_reward
         self._collected_checkpoints[rew_index] = (
             self._collected_checkpoints.get(rew_index, 0) + 1)
+    print("***** reward[0]", reward[0], file=sys.stderr)
     return reward[0]
 
 
