@@ -48,4 +48,6 @@ def create_environment(_):
       rewards=FLAGS.reward_experiment,
       channel_dimensions=channel_dimensions)
   logging.info('2. Creating environment: %s', FLAGS.game)
-  return observation.PackedBitsObservation(env)
+  obs = observation.PackedBitsObservation(env)
+  logging.info('3. Creating environment: %s', FLAGS.game)
+  return obs
