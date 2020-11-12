@@ -42,6 +42,7 @@ flags.DEFINE_float('initial_difficulty', 0.05, 'initial difficulty')
 
 flags.DEFINE_bool('custom_checkpoints', True,
                   'Whether custom checkpoints rewward is enabled.')
+flags.DEFINE_integer('checkpoint_num_episodes', 160000, 'number of episodes which checkpoint reward need to reach zero(NOT number of steps)')  # 160000epi=480Msteps
 
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
@@ -100,16 +101,23 @@ class DifficultyWrapper(gym.Wrapper):
 class CustomCheckpointRewardWrapper(gym.RewardWrapper):
   """A wrapper that adds a dense checkpoint reward."""
 
-  def __init__(self, env):
+  def __init__(self, env, checkpoint_num_episodes):
     gym.RewardWrapper.__init__(self, env)
     self._collected_checkpoints = {}
     self._num_checkpoints = 10
     self.checkpoint_reward = 0.1
-    self.epsilon = 0.99998  # exponential
+    # self.epsilon = 0.99998  # exponential
+    self.epsilon = self.checkpoint_reward / checkpoint_num_episodes # linear
 
   def reset(self):
     self._collected_checkpoints = {}
-    self.checkpoint_reward = np.float32(self.checkpoint_reward * self.epsilon)
+    # self.checkpoint_reward = np.float32(self.checkpoint_reward * self.epsilon)  # exponential
+    if self.checkpoint_reward > 0.0:
+      prev_checkpoint_reward = self.checkpoint_reward
+      self.checkpoint_reward = np.around(np.float32(self.checkpoint_reward - self.epsilon), decimals=8) # linear
+      print(f"[Reset] Checkpoint reward from {prev_checkpoint_reward} to {self.checkpoint_reward}", file=sys.stderr)
+    else:
+      self.checkpoint_reward = 0.0
     return self.env.reset()
 
   def get_state(self, to_pickle):
@@ -182,7 +190,7 @@ def create_environment(_unused):
     e = DifficultyWrapper(e, FLAGS.initial_difficulty)
   if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
-    e = CustomCheckpointRewardWrapper(e)  # add @kuto
+    e = CustomCheckpointRewardWrapper(e, FLAGS.checkpoint_num_episodes)  # add @kuto
   return e
 
 def main(argv):
