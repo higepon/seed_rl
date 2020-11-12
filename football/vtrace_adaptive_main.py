@@ -138,7 +138,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
       return reward
 
     assert len(reward) == len(observation)
-
+    print("***** before reward[0]", reward[0], type(reward[0]), file=sys.stderr)
     for rew_index in range(len(reward)):
       o = observation[rew_index]
       if reward[rew_index] == 1:
@@ -168,10 +168,12 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
                        self._collected_checkpoints.get(rew_index, 0))
         if d > threshold:
           break
+        print("***** X reward[0]", reward[0], type(reward[0]), file=sys.stderr)
         reward[rew_index] += self.checkpoint_reward
+        print("***** Y reward[0]", reward[0], type(reward[0]), file=sys.stderr)
         self._collected_checkpoints[rew_index] = (
             self._collected_checkpoints.get(rew_index, 0) + 1)
-    print("***** reward[0]", reward[0], file=sys.stderr)
+    print("***** reward[0]", reward[0], type(reward[0]), file=sys.stderr)
     return reward[0]
 
 
