@@ -85,7 +85,7 @@ def actor_loop(create_env_fn):
         env = create_env_fn(FLAGS.task)
 
 
-        print("*** after create env", file=sys.stderr)
+        print("*** after create env", file=sys.stderr, flush=True)
         # Unique ID to identify a specific run of an actor.
         run_id = np.random.randint(np.iinfo(np.int64).max)
         observation = env.reset()
@@ -93,7 +93,7 @@ def actor_loop(create_env_fn):
         raw_reward = 0.0
         done = False
         abandoned = False
-        print("*** after env reset env", file=sys.stderr)
+        print("*** after env reset env", file=sys.stderr, flush=True)
         global_step = 0
         episode_step = 0
         episode_step_sum = 0
@@ -105,17 +105,17 @@ def actor_loop(create_env_fn):
         last_log_time = timeit.default_timer()
         last_global_step = 0
 
-        print("*** before the actor loop", file=sys.stderr)
+        print("*** before the actor loop", file=sys.stderr, flush=True)
         while True:
 
           tf.summary.experimental.set_step(actor_step)
           env_output = utils.EnvOutput(reward, done, observation,
                                        abandoned, episode_step)
-          print("*** before inference", file=sys.stderr)
+          print("*** before inference", file=sys.stderr, flush=True)
           with elapsed_inference_s_timer:
             action = client.inference(
                 FLAGS.task, run_id, env_output, raw_reward)
-          print("*** after inference", file=sys.stderr)
+          print("*** after inference", file=sys.stderr, flush=True)
           with timer_cls('actor/elapsed_env_step_s', 1000):
             observation, reward, done, info = env.step(action.numpy())
           print("*** after env.step", file=sys.stderr)
