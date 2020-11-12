@@ -15,7 +15,7 @@ source $DIR/setup.sh
 
 export CONFIG=football
 export ENVIRONMENT=football
-export AGENT=vtrace_adaptive
+export AGENT=vtrace
 # See https://docs.google.com/spreadsheets/d/12emT_Zc1Ckbp3gZDBL-0hktmnhLefyCNCXBx7Xye1-o/edit#gid=0
 export WORKERS=4
 export NUM_VCPU=96
