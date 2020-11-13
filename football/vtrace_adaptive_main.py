@@ -42,7 +42,9 @@ flags.DEFINE_float('initial_difficulty', 0.05, 'initial difficulty')
 
 flags.DEFINE_bool('custom_checkpoints', True,
                   'Whether custom checkpoints rewward is enabled.')
-flags.DEFINE_integer('checkpoint_num_episodes', 160000, 'number of episodes which checkpoint reward need to reach zero(NOT number of steps)')  # 160000epi=480Msteps
+
+# NOTE: if we change number of actor, we have to adjust checkpoint_num_episodes 
+flags.DEFINE_integer('checkpoint_num_episodes', 212, 'number of episodes which checkpoint reward need to reach zero on each actor(NOT number of steps)')
 
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
