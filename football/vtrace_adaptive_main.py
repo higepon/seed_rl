@@ -81,7 +81,7 @@ class DifficultyWrapper(gym.Wrapper):
     if done:
         self.raw_rewards.append(self.raw_reward)
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
-        if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 0:
+        if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= -3:
             self.difficulty += 0.001
             self.customCheckpointRewardWrapper.checkpoint_reward -= 0.001
             if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
