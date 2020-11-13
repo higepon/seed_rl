@@ -169,7 +169,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
         if d > threshold:
           break
         print("***** X reward[0]", reward[0], type(reward[0]), file=sys.stderr)
-        reward[rew_index] += self.checkpoint_reward
+        reward[rew_index] += np.float32(self.checkpoint_reward)
         print("***** Y reward[0]", reward[0], type(reward[0]), file=sys.stderr)
         self._collected_checkpoints[rew_index] = (
             self._collected_checkpoints.get(rew_index, 0) + 1)
