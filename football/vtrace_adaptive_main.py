@@ -62,6 +62,10 @@ class DifficultyWrapper(gym.Wrapper):
     self.gameEnv = self.footballEnvCore._env
     assert(self.gameEnv.__class__.__name__ == 'GameEnv')
 
+    # Checkpoint wrapper
+    self.checkpointWrapper = self.gameEnv._env
+    print("*** wrapper", self.checkpointWrapper, file=sys.stderr)
+
     # Get scenario
     level = self.footballEnvCore._config['level']
     self.scenario = importlib.import_module(f'gfootball.scenarios.{level}')
@@ -189,12 +193,12 @@ def create_optimizer(unused_final_iteration):
 def create_environment(_unused):
   e = env.create_environment(_unused)
   print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
-  if FLAGS.adaptive_learning:
-    print("**** Adaptive learning enabled ****", file=sys.stderr)
-    e = DifficultyWrapper(e, FLAGS.initial_difficulty)
   if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
     e = CustomCheckpointRewardWrapper(e, FLAGS.checkpoint_num_episodes)  # add @kuto
+  if FLAGS.adaptive_learning:
+    print("**** Adaptive learning enabled ****", file=sys.stderr)
+    e = DifficultyWrapper(e, FLAGS.initial_difficulty)
   return e
 
 def main(argv):
