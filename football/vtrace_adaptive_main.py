@@ -48,7 +48,7 @@ flags.DEFINE_integer('checkpoint_num_episodes', 212, 'number of episodes which c
 
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
-  def __init__(self, env, initial_difficulty):
+  def __init__(self, env, initial_difficulty, customCheckpointRewardWrapper):
     # Call the parent constructor, so we can access self.env later
     super(DifficultyWrapper, self).__init__(env)
     print(f"Initialized DifficultyWrapper {self.unwrapped._env._config._scenario_cfg.right_team_difficulty}", file=sys.stderr)
@@ -63,8 +63,7 @@ class DifficultyWrapper(gym.Wrapper):
     assert(self.gameEnv.__class__.__name__ == 'GameEnv')
 
     # Checkpoint wrapper
-    self.checkpointWrapper = self.gameEnv._env
-    print("*** wrapper", self.checkpointWrapper, file=sys.stderr)
+    self.customCheckpointRewardWrapper = customCheckpointRewardWrapper
 
     # Get scenario
     level = self.footballEnvCore._config['level']
@@ -84,6 +83,10 @@ class DifficultyWrapper(gym.Wrapper):
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.difficulty += 0.001
+            self.customCheckpointRewardWrapper.checkpoint_reward -= 0.001
+            if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
+              self.customCheckpointRewardWrapper.checkpoint_reward = 0
+            print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
             if self.difficulty > 1.0:
               self.difficulty = 1.0
             self.raw_rewards = deque(maxlen=3)
@@ -112,18 +115,9 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     self._collected_checkpoints = {}
     self._num_checkpoints = 10
     self.checkpoint_reward = 0.1
-    # self.epsilon = 0.99998  # exponential
-    self.epsilon = self.checkpoint_reward / checkpoint_num_episodes # linear
 
   def reset(self):
     self._collected_checkpoints = {}
-    # self.checkpoint_reward = np.float32(self.checkpoint_reward * self.epsilon)  # exponential
-    if self.checkpoint_reward > 0.0:
-      prev_checkpoint_reward = self.checkpoint_reward
-      self.checkpoint_reward = self.checkpoint_reward - self.epsilon # linear
-      print(f"[Reset] Checkpoint reward from {prev_checkpoint_reward} to {self.checkpoint_reward}", file=sys.stderr)
-    else:
-      self.checkpoint_reward = 0.0
     return self.env.reset()
 
   def get_state(self, to_pickle):
@@ -193,12 +187,11 @@ def create_optimizer(unused_final_iteration):
 def create_environment(_unused):
   e = env.create_environment(_unused)
   print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
-  if FLAGS.custom_checkpoints:
+  if FLAGS.custom_checkpoints and FLAGS.adaptive_learning:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
     e = CustomCheckpointRewardWrapper(e, FLAGS.checkpoint_num_episodes)  # add @kuto
-  if FLAGS.adaptive_learning:
     print("**** Adaptive learning enabled ****", file=sys.stderr)
-    e = DifficultyWrapper(e, FLAGS.initial_difficulty)
+    e = DifficultyWrapper(e, FLAGS.initial_difficulty, e)
   return e
 
 def main(argv):
