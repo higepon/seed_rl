@@ -114,7 +114,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     # self.checkpoint_reward = np.float32(self.checkpoint_reward * self.epsilon)  # exponential
     if self.checkpoint_reward > 0.0:
       prev_checkpoint_reward = self.checkpoint_reward
-      self.checkpoint_reward = np.around(np.float32(self.checkpoint_reward - self.epsilon), decimals=8) # linear
+      self.checkpoint_reward = self.checkpoint_reward - self.epsilon # linear
       print(f"[Reset] Checkpoint reward from {prev_checkpoint_reward} to {self.checkpoint_reward}", file=sys.stderr)
     else:
       self.checkpoint_reward = 0.0
@@ -166,7 +166,9 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
                        self._collected_checkpoints.get(rew_index, 0))
         if d > threshold:
           break
-        reward[rew_index] += self.checkpoint_reward
+        # Note: self.checkpoint_reward is python float(64bit).
+        # But this reward is supposed to be np.float32.
+        reward[rew_index] += np.float32(self.checkpoint_reward)
         self._collected_checkpoints[rew_index] = (
             self._collected_checkpoints.get(rew_index, 0) + 1)
     return reward[0]
