@@ -27,6 +27,7 @@ from seed_rl.common import common_flags
 from seed_rl.common import profiling
 from seed_rl.common import utils
 import tensorflow as tf
+import traceback
 
 
 FLAGS = flags.FLAGS
@@ -180,5 +181,6 @@ def actor_loop(create_env_fn):
           actor_step += 1
       except (tf.errors.UnavailableError, tf.errors.CancelledError) as e:
         print(e, file=sys.stderr)
+        print(traceback.format_exc(), file=sys.stderr)
         logging.exception(e)
         env.close()
