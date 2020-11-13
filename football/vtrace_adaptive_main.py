@@ -43,9 +43,6 @@ flags.DEFINE_float('initial_difficulty', 0.05, 'initial difficulty')
 flags.DEFINE_bool('custom_checkpoints', True,
                   'Whether custom checkpoints rewward is enabled.')
 
-# NOTE: if we change number of actor, we have to adjust checkpoint_num_episodes
-flags.DEFINE_integer('checkpoint_num_episodes', 212, 'number of episodes which checkpoint reward need to reach zero on each actor(NOT number of steps)')
-
 # https://sites.google.com/view/rl-football/singleagent-team
 class DifficultyWrapper(gym.Wrapper):
   def __init__(self, env, initial_difficulty, customCheckpointRewardWrapper):
@@ -111,7 +108,7 @@ class DifficultyWrapper(gym.Wrapper):
 class CustomCheckpointRewardWrapper(gym.RewardWrapper):
   """A wrapper that adds a dense checkpoint reward."""
 
-  def __init__(self, env, checkpoint_num_episodes):
+  def __init__(self, env):
     gym.RewardWrapper.__init__(self, env)
     self._collected_checkpoints = {}
     self._num_checkpoints = 10
@@ -190,7 +187,7 @@ def create_environment(_unused):
   print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
   if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
-    e = CustomCheckpointRewardWrapper(e, FLAGS.checkpoint_num_episodes)  # add @kuto
+    e = CustomCheckpointRewardWrapper(e)  # add @kuto
   if FLAGS.adaptive_learning:
     print("**** Adaptive learning enabled ****", file=sys.stderr)
     e = DifficultyWrapper(e, FLAGS.initial_difficulty, e if FLAGS.custom_checkpoints else None)
