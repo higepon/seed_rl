@@ -83,10 +83,11 @@ class DifficultyWrapper(gym.Wrapper):
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
         if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
             self.difficulty += 0.001
-            self.customCheckpointRewardWrapper.checkpoint_reward -= 0.001
-            if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
-              self.customCheckpointRewardWrapper.checkpoint_reward = 0
-            print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
+            if self.customCheckpointRewardWrapper:
+              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.001
+              if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
+                self.customCheckpointRewardWrapper.checkpoint_reward = 0
+              print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
             if self.difficulty > 1.0:
               self.difficulty = 1.0
             self.raw_rewards = deque(maxlen=3)
@@ -187,11 +188,12 @@ def create_optimizer(unused_final_iteration):
 def create_environment(_unused):
   e = env.create_environment(_unused)
   print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
-  if FLAGS.custom_checkpoints and FLAGS.adaptive_learning:
+  if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
     e = CustomCheckpointRewardWrapper(e, FLAGS.checkpoint_num_episodes)  # add @kuto
+  if FLAGS.adaptive_learning:
     print("**** Adaptive learning enabled ****", file=sys.stderr)
-    e = DifficultyWrapper(e, FLAGS.initial_difficulty, e)
+    e = DifficultyWrapper(e, FLAGS.initial_difficulty, e if FLAGS.custom_checkpoints else None)
   return e
 
 def main(argv):
