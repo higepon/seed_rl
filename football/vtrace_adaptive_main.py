@@ -82,7 +82,7 @@ class DifficultyWrapper(gym.Wrapper):
         if len(self.raw_rewards) == self.num_episodes_for_avg and np.mean(self.raw_rewards) >= 1.0:
             self.difficulty += 0.05
             if self.customCheckpointRewardWrapper:
-              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.00011
+              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.0053
               if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
                 self.customCheckpointRewardWrapper.checkpoint_reward = 0
               print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
