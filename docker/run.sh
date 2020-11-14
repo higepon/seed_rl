@@ -34,7 +34,7 @@ JOB_NAME="SEED_20201114094523"
 ckpt = !ls -t gs://${BUCKET_NAME}/${JOB_NAME}/1/ckpt-* | cut -d '.' -f 1 | head -n 1
 ckpt = ckpt[0]
 
-ACTOR_INARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=actor";
+ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=actor";
 LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=learner --init_checkpoint=$ckpt";
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
