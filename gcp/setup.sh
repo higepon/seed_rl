@@ -26,7 +26,8 @@ start_training () {
   # Create bucket if doesn't exist.
   # gsutil ls gs://seed_rl || gsutil mb gs://seed_rl
   gsutil ls gs://${BUCKET_NAME} || gsutil mb gs://${BUCKET_NAME}
-  JOB_NAME="SEED_$(date +"%Y%m%d%H%M%S")"
+  # JOB_NAME="SEED_$(date +"%Y%m%d%H%M%S")"
+  JOB_NAME="SEED_20201114094523"  # modify checkpoint_reward & additional learning
   # Start training on AI platform.
   gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --project=${PROJECT_ID} \
