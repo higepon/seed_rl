@@ -68,7 +68,8 @@ class DifficultyWrapper(gym.Wrapper):
     print(f'level={level} scenario={self.scenario}', file=sys.stderr)
     self.build_scenario = self.scenario.build_scenario
 
-    self.raw_rewards = deque(maxlen=3)
+    self.num_episodes_for_avg = 1
+    self.raw_rewards = deque(maxlen=self.num_episodes_for_avg)
     self.raw_reward = 0
 
 
@@ -78,16 +79,16 @@ class DifficultyWrapper(gym.Wrapper):
     if done:
         self.raw_rewards.append(self.raw_reward)
         print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
-        if len(self.raw_rewards) == 3 and np.mean(self.raw_rewards) >= 1.1:
-            self.difficulty += 0.001
+        if len(self.raw_rewards) == self.num_episodes_for_avg and np.mean(self.raw_rewards) >= 1.0:
+            self.difficulty += 0.05
             if self.customCheckpointRewardWrapper:
-              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.00011
+              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.0053
               if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
                 self.customCheckpointRewardWrapper.checkpoint_reward = 0
               print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
             if self.difficulty > 1.0:
               self.difficulty = 1.0
-            self.raw_rewards = deque(maxlen=3)
+            self.raw_rewards = deque(maxlen=self.num_episodes_for_avg)
     return observation, reward, done, info
 
   def reset(self):
