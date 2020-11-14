@@ -138,9 +138,9 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     for rew_index in range(len(reward)):
       o = observation[rew_index]
       if reward[rew_index] == 1:
-        reward[rew_index] += np.float32(self.checkpoint_reward) * (
+        reward[rew_index] += np.float32(self.checkpoint_reward * (
             self._num_checkpoints -
-            self._collected_checkpoints.get(rew_index, 0))
+            self._collected_checkpoints.get(rew_index, 0)))
         self._collected_checkpoints[rew_index] = self._num_checkpoints
         continue
 
