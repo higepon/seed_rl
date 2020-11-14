@@ -27,15 +27,8 @@ NUM_ACTORS=$3
 shift 3
 
 export PYTHONPATH=$PYTHONPATH:/
-
-PROJECT_ID=$(gcloud config get-value project)
-BUCKET_NAME=${PROJECT_ID}-aiplatform
-JOB_NAME="SEED_20201114094523" 
-ckpt = !ls -t gs://${BUCKET_NAME}/${JOB_NAME}/1/ckpt-* | cut -d '.' -f 1 | head -n 1
-ckpt = ckpt[0]
-
 ACTOR_BINARY="CUDA_VISIBLE_DEVICES='' python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=actor";
-LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=learner --init_checkpoint=$ckpt";
+LEARNER_BINARY="python3 ../${ENVIRONMENT}/${AGENT}_adaptive_main.py --run_mode=learner --init_checkpoint=gs://oceanic-hook-237214-aiplatform/SEED_20201114094523/1/ckpt-8";
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 tmux new-session -d -t seed_rl
