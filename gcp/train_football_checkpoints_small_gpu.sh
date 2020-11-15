@@ -52,6 +52,10 @@ trainingInput:
       type: CATEGORICAL
       categoricalValues:
       - 11_vs_11_hard_stochastic
+    - parameterName: init_checkpoint
+      type: CATEGORICAL
+      categoricalValues:
+      - gs://higepon-kaggle-football-aiplatform/SEED_20201115163028/1/ckpt-1
     - parameterName: reward_experiment
       type: CATEGORICAL
       categoricalValues:
