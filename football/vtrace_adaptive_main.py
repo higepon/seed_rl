@@ -38,7 +38,7 @@ flags.DEFINE_float('learning_rate', 0.00048, 'Learning rate.')
 # Custom settings by kuto and higpon.
 flags.DEFINE_bool('adaptive_learning', True,
                   'Whether adjust difficulty as training goes.')
-flags.DEFINE_float('initial_difficulty', 0.05, 'initial difficulty')
+flags.DEFINE_float('initial_difficulty', 1.0, 'initial difficulty')
 
 flags.DEFINE_bool('custom_checkpoints', True,
                   'Whether custom checkpoints rewward is enabled.')
@@ -68,32 +68,12 @@ class DifficultyWrapper(gym.Wrapper):
     print(f'level={level} scenario={self.scenario}', file=sys.stderr)
     self.build_scenario = self.scenario.build_scenario
 
-    self.num_episodes_for_avg = 1
-    self.raw_rewards = deque(maxlen=self.num_episodes_for_avg)
-    self.raw_reward = 0
-
 
   def step(self, action):
     observation, reward, done, info = self.env.step(action)
-    self.raw_reward += float(info['score_reward'])
-    if done:
-        self.raw_rewards.append(self.raw_reward)
-        print(f"game_reward={self.raw_reward} avg_raw_reward={np.mean(self.raw_rewards)} {self.raw_rewards}", file=sys.stderr)
-        if len(self.raw_rewards) == self.num_episodes_for_avg and np.mean(self.raw_rewards) >= 1.0:
-            self.difficulty += 0.05
-            if self.customCheckpointRewardWrapper:
-              self.customCheckpointRewardWrapper.checkpoint_reward -= 0.0053
-              if self.customCheckpointRewardWrapper.checkpoint_reward < 0:
-                self.customCheckpointRewardWrapper.checkpoint_reward = 0
-              print(f"[Reset] Checkpoint reward to {self.customCheckpointRewardWrapper.checkpoint_reward}", file=sys.stderr)
-            if self.difficulty > 1.0:
-              self.difficulty = 1.0
-            self.raw_rewards = deque(maxlen=self.num_episodes_for_avg)
     return observation, reward, done, info
 
   def reset(self):
-    self.raw_reward = 0
-
     def build_scenario(builder):
       self.build_scenario(builder)
       builder.config().right_team_difficulty = self.difficulty
@@ -103,6 +83,9 @@ class DifficultyWrapper(gym.Wrapper):
     ret = self.env.reset()
     difficulty_current = self.gameEnv.config.right_team_difficulty
     print(f"[Reset] difficulty from {difficulty_prev} to {difficulty_current}", file=sys.stderr)
+    if self.customCheckpointRewardWrapper:
+      self.customCheckpointRewardWrapper.checkpoint_reward = 0.0
+
     return ret
 
 # add custom reward wrapper @kuto
@@ -113,7 +96,7 @@ class CustomCheckpointRewardWrapper(gym.RewardWrapper):
     gym.RewardWrapper.__init__(self, env)
     self._collected_checkpoints = {}
     self._num_checkpoints = 10
-    self.checkpoint_reward = 0.1
+    self.checkpoint_reward = 0.0
 
   def reset(self):
     self._collected_checkpoints = {}

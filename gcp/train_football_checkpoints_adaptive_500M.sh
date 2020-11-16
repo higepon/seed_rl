@@ -73,10 +73,14 @@ trainingInput:
       minValue: 32
       maxValue: 32
       scaleType: UNIT_LOG_SCALE
+    - parameterName: init_checkpoint
+      type: CATEGORICAL
+      categoricalValues:
+      - gs://higepon-kaggle-football-aiplatform/SEED_500M/1/ckpt-73
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 500000000
-      maxValue: 500000000
+      minValue: 600000000
+      maxValue: 600000000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
@@ -100,8 +104,8 @@ trainingInput:
       scaleType: UNIT_LOG_SCALE
     - parameterName: initial_difficulty
       type: DOUBLE
-      minValue: 0.05 # easy
-      maxValue: 0.05 # easy
+      minValue: 1.0 # hard
+      maxValue: 1.0 # hard
       scaleType: UNIT_LOG_SCALE
 EOF
 
