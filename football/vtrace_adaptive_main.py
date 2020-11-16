@@ -40,7 +40,7 @@ flags.DEFINE_bool('adaptive_learning', True,
                   'Whether adjust difficulty as training goes.')
 flags.DEFINE_float('initial_difficulty', 1.0, 'initial difficulty')
 
-flags.DEFINE_bool('custom_checkpoints', True,
+flags.DEFINE_bool('custom_checkpoints', False,
                   'Whether custom checkpoints rewward is enabled.')
 
 # https://sites.google.com/view/rl-football/singleagent-team
