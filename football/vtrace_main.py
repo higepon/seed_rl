@@ -20,7 +20,7 @@ from absl import flags
 
 from seed_rl.agents.vtrace import learner
 from seed_rl.common import actor
-from seed_rl.common import common_flags  
+from seed_rl.common import common_flags
 from seed_rl.football import env
 from seed_rl.football import networks
 import tensorflow as tf
@@ -48,7 +48,7 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
-    actor.actor_loop(env.create_environment)
+    actor.actor_loop(env.create_environment_for_actor)
   elif FLAGS.run_mode == 'learner':
     learner.learner_loop(env.create_environment,
                          create_agent,

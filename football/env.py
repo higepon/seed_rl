@@ -32,7 +32,7 @@ flags.DEFINE_enum('smm_size', 'default', ['default', 'medium', 'large'],
 flags.DEFINE_integer('num_action_repeats', 1, 'Number of action repeats.')
 
 
-def create_environment(_):
+def create_environment_for_actor(_):
   """Returns a gym Football environment."""
   logging.info('Creating environment: %s', FLAGS.game)
   assert FLAGS.num_action_repeats == 1, 'Only action repeat of 1 is supported.'
@@ -47,6 +47,26 @@ def create_environment(_):
       stacked=True,
       rewards=FLAGS.reward_experiment,
       number_of_right_players_agent_controls=1,
+      channel_dimensions=channel_dimensions)
+  logging.info('2. Creating environment: %s', FLAGS.game)
+  obs = observation.PackedBitsObservation(env)
+  logging.info('3. Creating environment: %s', FLAGS.game)
+  return obs
+
+def create_environment(_):
+  """Returns a gym Football environment."""
+  logging.info('Creating environment: %s', FLAGS.game)
+  assert FLAGS.num_action_repeats == 1, 'Only action repeat of 1 is supported.'
+  channel_dimensions = {
+      'default': (96, 72),
+      'medium': (120, 90),
+      'large': (144, 108),
+  }[FLAGS.smm_size]
+  logging.info('1. Creating environment: %s', FLAGS.game)
+  env = gym.make(
+      'gfootball:GFootball-%s-SMM-v0' % FLAGS.game,
+      stacked=True,
+      rewards=FLAGS.reward_experiment,
       channel_dimensions=channel_dimensions)
   logging.info('2. Creating environment: %s', FLAGS.game)
   obs = observation.PackedBitsObservation(env)

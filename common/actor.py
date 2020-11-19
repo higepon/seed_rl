@@ -116,7 +116,7 @@ def actor_loop(create_env_fn):
           action2 = bot.agent(observation2)
 
           with timer_cls('actor/elapsed_env_step_s', 1000):
-            [observation, observation2], [reward, reward2], [done, done2], [info, info2] = env.step(action.numpy(), action2)
+            [observation, observation2], [reward, reward2], [done, done2], [info, info2] = env.step([action.numpy(), action2])
           if is_rendering_enabled:
             env.render()
           episode_step += 1
