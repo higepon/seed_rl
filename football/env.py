@@ -46,6 +46,7 @@ def create_environment(_):
       'gfootball:GFootball-%s-SMM-v0' % FLAGS.game,
       stacked=True,
       rewards=FLAGS.reward_experiment,
+      number_of_right_players_agent_controls=1,
       channel_dimensions=channel_dimensions)
   logging.info('2. Creating environment: %s', FLAGS.game)
   obs = observation.PackedBitsObservation(env)

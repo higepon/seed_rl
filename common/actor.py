@@ -26,6 +26,7 @@ from seed_rl import grpc
 from seed_rl.common import common_flags
 from seed_rl.common import profiling
 from seed_rl.common import utils
+from seed_rl.common import bot
 import tensorflow as tf
 import traceback
 
@@ -86,7 +87,7 @@ def actor_loop(create_env_fn):
 
         # Unique ID to identify a specific run of an actor.
         run_id = np.random.randint(np.iinfo(np.int64).max)
-        observation = env.reset()
+        observation, observation2 = env.reset()
         reward = 0.0
         raw_reward = 0.0
         done = False
@@ -110,8 +111,12 @@ def actor_loop(create_env_fn):
           with elapsed_inference_s_timer:
             action = client.inference(
                 FLAGS.task, run_id, env_output, raw_reward)
+
+          # Get action of opponent bot.
+          action2 = bot.agent(observation2)
+
           with timer_cls('actor/elapsed_env_step_s', 1000):
-            observation, reward, done, info = env.step(action.numpy())
+            [observation, observation2], [reward, reward2], [done, done2], [info, info2] = env.step(action.numpy(), action2)
           if is_rendering_enabled:
             env.render()
           episode_step += 1
@@ -174,7 +179,7 @@ def actor_loop(create_env_fn):
             # from the terminal state to the resetted state in the next loop
             # iteration (with zero rewards).
             with timer_cls('actor/elapsed_env_reset_s', 10):
-              observation = env.reset()
+              observation, observation2 = env.reset()
               episode_step = 0
             if is_rendering_enabled:
               env.render()
