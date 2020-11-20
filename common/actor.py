@@ -167,13 +167,19 @@ def actor_loop(create_env_fn):
           print("***obs", observation, file=sys.stderr)
 
           # create SMM stacked
-          observation = observation['players_raw'][0]
-          generate_smm([observation])[0]
+          #observation = observation['players_raw'][0]
+          observation = generate_smm([observation])[0]
           if not observations:
               observations.extend([observation] * 4)
           else:
               observations.append(observation)
           observation = np.concatenate(list(observations), axis=-1)
+
+          observation = np.concatenate(list(observations), axis=-1)
+          observation = np.packbits(observation, axis=-1)
+          if observation.shape[-1] % 2 == 1:
+              observation = np.pad(observation, [(0, 0)] * (observation.ndim - 1) + [(0, 1)], 'constant')
+          observation = observation.view(np.uint16)
 
           env_output = utils.EnvOutput(reward, done, observation,
                                        abandoned, episode_step)
@@ -185,7 +191,7 @@ def actor_loop(create_env_fn):
           action2 = bot.agent(observation2)
 
           with timer_cls('actor/elapsed_env_step_s', 1000):
-            [observation, observation2], [reward, reward2], [done, done2], [info, info2] = env.step([action.numpy(), action2])
+            [observation, observation2], [reward, reward2], done, info = env.step([action.numpy(), action2.value])
           if is_rendering_enabled:
             env.render()
           episode_step += 1
