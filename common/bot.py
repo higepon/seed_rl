@@ -1,6 +1,9 @@
 from kaggle_environments.envs.football.helpers import *
 import math
 import random
+from functools import wraps
+from enum import Enum
+from typing import *
 
 def find_patterns(obs, player_x, player_y):
     """ find list of appropriate patterns in groups of memory patterns """
@@ -638,6 +641,20 @@ groups_of_memory_patterns = [
     defence_memory_patterns,
     other_memory_patterns
 ]
+
+sticky_index_to_action = [
+    Action.Left,
+    Action.TopLeft,
+    Action.Top,
+    Action.TopRight,
+    Action.Right,
+    Action.BottomRight,
+    Action.Bottom,
+    Action.BottomLeft,
+    Action.Sprint,
+    Action.Dribble
+]
+
 
 def human_readable_agent(agent: Callable[[Dict], Action]):
     """
