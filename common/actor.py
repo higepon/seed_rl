@@ -106,6 +106,7 @@ def actor_loop(create_env_fn):
         while True:
 
           tf.summary.experimental.set_step(actor_step)
+          print("***obs", observation, file=sys.stderr)
           env_output = utils.EnvOutput(reward, done, observation,
                                        abandoned, episode_step)
           with elapsed_inference_s_timer:
