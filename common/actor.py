@@ -164,7 +164,7 @@ def actor_loop(create_env_fn):
         while True:
 
           tf.summary.experimental.set_step(actor_step)
-          print("***obs", observation, file=sys.stderr)
+          #print("***obs", observation, file=sys.stderr)
 
           # create SMM stacked
           #observation = observation['players_raw'][0]
