@@ -49,7 +49,7 @@ def main(argv):
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
     print("*** Starting normal actor", file=sys.stderr)
-    actor.actor_loop(env.create_environment_for)
+    actor.actor_loop(env.create_environment)
   elif FLAGS.run_mode == 'bot_actor':
     print("*** Starting bot actor", file=sys.stderr)
     bot_actor.actor_loop(env.create_environment_for_actor)
