@@ -167,7 +167,10 @@ def create_optimizer(unused_final_iteration):
   return optimizer, learning_rate_fn
 
 def create_environment(_unused):
-  e = env.create_environment(_unused)
+  if FLAGS.run_mode == 'actor':
+    e = env.create_environment_for_actor(_unused)
+  else:
+    e = env.create_environment(_unused)
   print("**** Adaptive {}({}) Custom checkpoint {}".format(FLAGS.adaptive_learning, FLAGS.initial_difficulty, FLAGS.custom_checkpoints), file=sys.stderr)
   if FLAGS.custom_checkpoints:
     print("**** Custom checkpoints reward enabled ****", file=sys.stderr)
