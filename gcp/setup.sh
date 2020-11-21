@@ -30,7 +30,7 @@ start_training () {
   # Start training on AI platform.
   gcloud beta ai-platform jobs submit training ${JOB_NAME} \
     --project=${PROJECT_ID} \
-    --job-dir gs://${BUCKET_NAME}/SEED_800M \
+    --job-dir gs://${BUCKET_NAME}/SEED_900M_mix_training_test \
     --region ${REGION} \
     --config /tmp/config.yaml \
     --stream-logs -- --environment=${ENVIRONMENT} --agent=${AGENT} \

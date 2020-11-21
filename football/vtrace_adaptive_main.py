@@ -184,8 +184,10 @@ def main(argv):
   if len(argv) > 1:
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
+    print("*** Starting normal actors", file=sys.stderr)
     actor.actor_loop(create_environment)
   elif FLAGS.run_mode == 'bot_actor':
+    print("*** Starting bot actor", file=sys.stderr)
     bot_actor.actor_loop(create_environment)
   elif FLAGS.run_mode == 'learner':
     learner.learner_loop(create_environment,
