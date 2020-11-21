@@ -34,12 +34,12 @@ import collections
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_integer('task', 0, 'Task id.')
-flags.DEFINE_integer('num_actors_with_summaries', 4,
-                     'Number of actors that will log debug/profiling TF '
-                     'summaries.')
-flags.DEFINE_bool('render', False,
-                  'Whether the first actor should render the environment.')
+# flags.DEFINE_integer('task', 0, 'Task id.')
+# flags.DEFINE_integer('num_actors_with_summaries', 4,
+#                      'Number of actors that will log debug/profiling TF '
+#                      'summaries.')
+# flags.DEFINE_bool('render', False,
+#                   'Whether the first actor should render the environment.')
 
 
 def are_summaries_enabled():
