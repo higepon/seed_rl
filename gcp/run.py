@@ -67,6 +67,21 @@ def run_actor(executor, config, actor_id):
     args.extend(sys.argv[sys.argv.index('--') + 1:])
   return executor.submit(subprocess.check_call, args)
 
+def run_bot_actor(executor, config, actor_id):
+  """Runs actor job using executor."""
+  master_addr = config.get('cluster').get('master')[0]
+  args = [
+      'python', get_py_main(),
+      '--run_mode=bot_actor',
+      '--server_address={}'.format(master_addr),
+      '--num_actors={}'.format(FLAGS.workers * FLAGS.actors_per_worker)
+  ]
+  worker_index = config.get('task').get('index')
+  args.append('--task={}'.format(worker_index * FLAGS.actors_per_worker +
+                                 actor_id))
+  if '--' in sys.argv:
+    args.extend(sys.argv[sys.argv.index('--') + 1:])
+  return executor.submit(subprocess.check_call, args)
 
 def main(_):
   tf_config = os.environ.get('TF_CONFIG', None)
@@ -83,7 +98,11 @@ def main(_):
   else:
     assert job_type == 'worker', 'Unexpected task type: {}'.format(job_type)
     for actor_id in range(FLAGS.actors_per_worker):
-      futures.append(run_actor(executor, config, actor_id))
+      if actor_id % 2 == 0:
+        futures.append(run_actor(executor, config, actor_id))
+      else:
+        futures.append(run_bot_actor(executor, config, actor_id))
+
   for f in futures:
     f.result()
 

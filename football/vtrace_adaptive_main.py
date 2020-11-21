@@ -19,7 +19,7 @@ from absl import app
 from absl import flags
 
 from seed_rl.agents.vtrace import learner
-from seed_rl.common import actor
+from seed_rl.common import actor, bot_actor
 from seed_rl.common import common_flags
 from seed_rl.football import env
 from seed_rl.football import networks
@@ -167,7 +167,7 @@ def create_optimizer(unused_final_iteration):
   return optimizer, learning_rate_fn
 
 def create_environment(_unused):
-  if FLAGS.run_mode == 'actor':
+  if FLAGS.run_mode == 'bot_actor':
     e = env.create_environment_for_actor(_unused)
   else:
     e = env.create_environment(_unused)
@@ -185,6 +185,8 @@ def main(argv):
     raise app.UsageError('Too many command-line arguments.')
   if FLAGS.run_mode == 'actor':
     actor.actor_loop(create_environment)
+  elif FLAGS.run_mode == 'bot_actor':
+    bot_actor.actor_loop(create_environment)
   elif FLAGS.run_mode == 'learner':
     learner.learner_loop(create_environment,
                          create_agent,
