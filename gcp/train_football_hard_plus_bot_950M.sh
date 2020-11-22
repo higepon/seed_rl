@@ -76,12 +76,12 @@ trainingInput:
     - parameterName: init_checkpoint
       type: CATEGORICAL
       categoricalValues:
-      - gs://higepon-kaggle-football-aiplatform/SEED_hard_plus_bot_950M/1/ckpt-135
+      - gs://higepon-kaggle-football-aiplatform/SEED_hard_plus_bot_950M/1/ckpt-143
       #- gs://oceanic-hook-237214-aiplatform/SEED_635M/1/ckpt-94
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 950000000
-      maxValue: 950000000
+      minValue: 1000000000
+      maxValue: 1000000000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE

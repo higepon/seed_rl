@@ -98,7 +98,7 @@ def main(_):
   else:
     assert job_type == 'worker', 'Unexpected task type: {}'.format(job_type)
     for actor_id in range(FLAGS.actors_per_worker):
-      if actor_id % 2 == 0:
+      if (actor_id % 8) < 3:
         futures.append(run_actor(executor, config, actor_id))
       else:
         futures.append(run_bot_actor(executor, config, actor_id))
