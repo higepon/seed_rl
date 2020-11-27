@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 import pickle
+import sys
 import math
 
 # load the model from disk
@@ -108,6 +109,7 @@ def human_readable_agent(agent: Callable[[Dict], Action]):
 
 @human_readable_agent
 def agent(obs):
+    print("random agent is working", file=sys.stderr)
     global loaded_model
     if not loaded_model:
         loaded_model = pickle.load(open(filename, 'rb'))
