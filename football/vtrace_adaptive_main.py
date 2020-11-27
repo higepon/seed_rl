@@ -19,7 +19,7 @@ from absl import app
 from absl import flags
 
 from seed_rl.agents.vtrace import learner
-from seed_rl.common import actor, bot_actor
+from seed_rl.common import actor, bot_actor, random_forest_bot_actor
 from seed_rl.common import common_flags
 from seed_rl.football import env
 from seed_rl.football import networks
@@ -189,6 +189,9 @@ def main(argv):
   elif FLAGS.run_mode == 'bot_actor':
     print("*** Starting bot actor", file=sys.stderr)
     bot_actor.actor_loop(create_environment)
+  elif FLAGS.run_mode == 'random_forest_bot_actor':
+    print("*** Starting random forest bot actor", file=sys.stderr)
+    random_forest_bot_actor.actor_loop(create_environment)
   elif FLAGS.run_mode == 'learner':
     learner.learner_loop(create_environment,
                          create_agent,

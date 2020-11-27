@@ -40,6 +40,10 @@ RUN ls -lSha /usr/bin/python3
 RUN python --version
 RUN python3 --version
 
+# download model file for random forest to /
+RUN curl -Ls https://github.com/higepon/seed_rl/releases/download/0.0.1/model.sav.zip -o model.sav.zip
+RUN unzip model.sav.zip
+
 RUN apt-get update && apt-get install -y \
   git \
   cmake \
