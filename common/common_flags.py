@@ -25,7 +25,7 @@ flags.DEFINE_string('server_address', 'localhost:8686', 'Server address.',
 
 
 flags.DEFINE_enum(
-    'run_mode', None, ['learner', 'actor', 'bot_actor'],
+    'run_mode', None, ['learner', 'actor', 'bot_actor', 'random_forest_bot_actor'],
     'Whether we run the learner or the actor. Each actor runs the environment '
     'and sends to the learner each env observation and receives the action to '
     'play. A learner performs policy inference for batches of observations '
