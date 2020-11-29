@@ -80,8 +80,8 @@ trainingInput:
       #- gs://oceanic-hook-237214-aiplatform/SEED_hard_plus_bot_1500M/1/ckpt-244
     - parameterName: total_environment_frames
       type: INTEGER
-      minValue: 1675000000
-      maxValue: 1675000000
+      minValue: 1660000000
+      maxValue: 1660000000
       scaleType: UNIT_LOG_SCALE
     - parameterName: discounting
       type: DOUBLE
