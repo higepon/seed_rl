@@ -119,7 +119,7 @@ def main(_):
       mode = actor_id % 8
       if mode == 0:
         futures.append(run_actor(executor, config, actor_id))
-      elif mode == 1:
+      elif mode == 1 or mode == 2:
         futures.append(run_bot_actor(executor, config, actor_id))
       else:
         futures.append(run_random_forest_bot_actor(executor, config, actor_id))
